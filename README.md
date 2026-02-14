@@ -1,16 +1,63 @@
-# myapp
+# Flutter Notes
 
-A new Flutter project.
+Una aplicación de notas simple e intuitiva creada con Flutter. Esta aplicación permite a los usuarios crear, editar y organizar notas con una interfaz moderna y fácil de usar.
 
-## Getting Started
+## Características
 
-This project is a starting point for a Flutter application.
+### v2.0
 
-A few resources to get you started if this is your first Flutter project:
+- **Mejoras en el Editor:**
+    - **Funcionalidad de Deshacer/Rehacer:** Deshacer y rehacer cambios en el texto, listas de verificación y estilo.
+    - **Integración de Listas de Verificación:** Agrega, edita, elimina y reordena elementos de la lista de verificación.
+    - **Personalización del Fondo:** Cambia el color de fondo o establece una imagen de la galería como fondo de la nota.
+    - **Formato de Texto:** Ajusta el tamaño de la fuente y aplica estilos de negrita e cursiva.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### v1.0
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Pantalla Principal y Diseño:**
+    - **Vistas Dobles:** Cambia entre una vista de lista compacta y una vista de cuadrícula más visual.
+    - **Clasificación Personalizable:** Ordena las notas alfabéticamente, por fecha de modificación o en un orden personalizado.
+    - **Búsqueda Funcional:** Filtra las notas por título o contenido en tiempo real.
+
+- **Editor de Notas:**
+    - **Edición de Texto Enriquecido:** Crea y edita notas con campos separados para el título y el contenido.
+    - **Guardado Automático:** Los cambios se guardan automáticamente al volver a la pantalla principal.
+
+- **Selección y Acciones en Masa:**
+    - **Modo de Selección:** Mantén presionada una nota para seleccionar varias notas.
+    - **Acciones en Masa:** Comparte o elimina varias notas a la vez.
+
+- **Experiencia de Incorporación:**
+    - **Nota de Bienvenida:** Una nota preexistente guía a los usuarios a través de las características clave de la aplicación.
+
+## Instalación
+
+1. Asegúrate de tener Flutter instalado. Para obtener instrucciones, consulta la [documentación de Flutter](https://flutter.dev/docs/get-started/install).
+2. Clona el repositorio:
+   ```sh
+   git clone https://github.com/tu-usuario/flutter-notes.git
+   ```
+3. Navega al directorio del proyecto:
+   ```sh
+   cd flutter-notes
+   ```
+4. Instala las dependencias:
+   ```sh
+   flutter pub get
+   ```
+
+## Uso
+
+1. Ejecuta la aplicación:
+   ```sh
+   flutter run
+   ```
+2. ¡Comienza a tomar notas!
+
+## Contribuciones
+
+¡Las contribuciones son bienvenidas! Si tienes alguna idea para una nueva característica o has encontrado un error, abre un [issue](https://github.com/tu-usuario/flutter-notes/issues) o envía un [pull request](https://github.com/tu-usuario/flutter-notes/pulls).
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo [LICENSE](LICENSE) para obtener más detalles.
