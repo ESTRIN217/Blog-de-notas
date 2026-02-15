@@ -255,13 +255,14 @@ class _EditorScreenState extends State<EditorScreen> {
     });
 }
 
-  void _onReorder(int oldIndex, int newIndex) {
+  void _onReorder(ChecklistItem item, ChecklistItem targetItem) {
     setState(() {
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
+      final oldIndex = _checklistItems.indexOf(item);
+      final newIndex = _checklistItems.indexOf(targetItem);
+      if (oldIndex != -1 && newIndex != -1) {
+        final movedItem = _checklistItems.removeAt(oldIndex);
+        _checklistItems.insert(newIndex, movedItem);
       }
-      final item = _checklistItems.removeAt(oldIndex);
-      _checklistItems.insert(newIndex, item);
       _recordState();
     });
   }
@@ -448,10 +449,10 @@ class _EditorScreenState extends State<EditorScreen> {
     final controller = _checklistControllers[item.id];
     if (controller == null) return Container(key: ValueKey(item.id));
 
-    return ReorderableDelayedDragStartListener(
-      key: ValueKey(item.id),
-      index: index,
+    final checklistItem = Material(
+      color: Colors.transparent,
       child: Row(
+        key: ValueKey(item.id),
         children: [
           Checkbox(
             value: item.isChecked,
@@ -477,7 +478,30 @@ class _EditorScreenState extends State<EditorScreen> {
             ),
           ),
           IconButton(icon: Icon(Icons.clear, color: textColor), onPressed: () => _deleteChecklistItem(item.id)),
+          ReorderableDragStartListener(index: index, child: const Icon(Icons.drag_handle)),
         ],
+      ),
+    );
+
+    return LongPressDraggable<ChecklistItem>(
+      data: item,
+      feedback: Material(
+        elevation: 4.0,
+        child: Container(
+          width: MediaQuery.of(context).size.width - 32,
+          color: Theme.of(context).cardColor,
+          child: checklistItem,
+        ),
+      ),
+      childWhenDragging: Container(height: 50), // Placeholder for the dragged item
+      child: DragTarget<ChecklistItem>(
+        onWillAcceptWithDetails: (details) => true,
+        onAcceptWithDetails: (details) {
+          _onReorder(details.data, item);
+        },
+        builder: (context, candidateData, rejectedData) {
+          return checklistItem;
+        },
       ),
     );
   }
@@ -545,10 +569,14 @@ class _EditorScreenState extends State<EditorScreen> {
                         ),
                       ]),
                     ),
-                    SliverReorderableList(
-                      itemBuilder: (context, index) => _buildChecklistItem(_checklistItems[index], index, textColor),
-                      itemCount: _checklistItems.length,
-                      onReorder: _onReorder,
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final item = _checklistItems[index];
+                          return _buildChecklistItem(item, index, textColor);
+                        },
+                        childCount: _checklistItems.length,
+                      ),
                     ),
                   ],
                 ),
