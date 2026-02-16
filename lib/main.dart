@@ -1,16 +1,25 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 import 'package:share_plus/share_plus.dart';
 import 'list_item.dart';
 import 'editor_screen.dart';
 import 'checklist_item.dart';
+import 'settings_screen.dart';
+import 'theme_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -18,13 +27,37 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Notes',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Notes'),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return DynamicColorBuilder(
+          builder: (lightDynamic, darkDynamic) {
+            ColorScheme lightColorScheme;
+            ColorScheme darkColorScheme;
+
+            if (themeProvider.useDynamicColors && lightDynamic != null && darkDynamic != null) {
+              lightColorScheme = lightDynamic;
+              darkColorScheme = darkDynamic;
+            } else {
+              lightColorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.light);
+              darkColorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark);
+            }
+
+            return MaterialApp(
+              title: 'Flutter Notes',
+              theme: ThemeData(
+                colorScheme: lightColorScheme,
+                useMaterial3: true,
+              ),
+              darkTheme: ThemeData(
+                colorScheme: darkColorScheme,
+                useMaterial3: true,
+              ),
+              themeMode: themeProvider.themeMode,
+              home: const MyHomePage(title: 'Flutter Notes'),
+            );
+          },
+        );
+      },
     );
   }
 }
@@ -368,7 +401,13 @@ class _MyHomePageState extends State<MyHomePage> {
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
-              onTap: () => Navigator.pop(context),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                );
+              },
             ),
             const Divider(),
             const ListTile(
