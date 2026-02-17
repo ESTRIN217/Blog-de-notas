@@ -539,7 +539,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildGridView() {
     final bool canReorder = _sortMethod == SortMethod.custom && _searchController.text.isEmpty;
-    final gridDelegate = const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 16, mainAxisSpacing: 16, childAspectRatio: 0.75);
+    const gridDelegate = SliverGridDelegateWithMaxCrossAxisExtent(
+      maxCrossAxisExtent: 200, // Cada item tendrá un ancho máximo de 200
+      crossAxisSpacing: 16, 
+      mainAxisSpacing: 16, 
+      childAspectRatio: 0.75,
+    );
 
     if (canReorder) {
       return ReorderableGridView.builder(

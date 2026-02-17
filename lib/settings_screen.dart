@@ -32,17 +32,31 @@ class SettingsScreen extends StatelessWidget {
                   const ListTile(
                     title: Text('Theme Mode'),
                   ),
-                  RadioListTile<ThemeMode>(
-                    title: const Text('System'),
-                    value: ThemeMode.system,
-                  ),
-                  RadioListTile<ThemeMode>(
-                    title: const Text('Light'),
-                    value: ThemeMode.light,
-                  ),
-                  RadioListTile<ThemeMode>(
-                    title: const Text('Dark'),
-                    value: ThemeMode.dark,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: SegmentedButton<ThemeMode>(
+                      segments: const <ButtonSegment<ThemeMode>>[
+                        ButtonSegment<ThemeMode>(
+                          value: ThemeMode.system,
+                          label: Text('System'),
+                          icon: Icon(Icons.brightness_auto),
+                        ),
+                        ButtonSegment<ThemeMode>(
+                          value: ThemeMode.light,
+                          label: Text('Light'),
+                          icon: Icon(Icons.light_mode),
+                        ),
+                        ButtonSegment<ThemeMode>(
+                          value: ThemeMode.dark,
+                          label: Text('Dark'),
+                          icon: Icon(Icons.dark_mode),
+                        ),
+                      ],
+                      selected: <ThemeMode>{themeProvider.themeMode},
+                      onSelectionChanged: (Set<ThemeMode> newSelection) {
+                        themeProvider.setThemeMode(newSelection.first);
+                      },
+                    ),
                   ),
                 ],
               );
