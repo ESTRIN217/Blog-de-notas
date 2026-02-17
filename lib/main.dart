@@ -13,6 +13,7 @@ import 'list_item.dart';
 import 'editor_screen.dart';
 import 'settings_screen.dart';
 import 'theme_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   runApp(
@@ -54,16 +55,9 @@ class MyApp extends StatelessWidget {
                 useMaterial3: true,
               ),
               themeMode: themeProvider.themeMode,
-              localizationsDelegates: const [
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-                FlutterQuillLocalizations.delegate,
-              ],
-              supportedLocales: const [
-                Locale('en'),
-              ],
-              home: const MyHomePage(title: 'Flutter Notes'),
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: const MyHomePage(),
             );
           },
         );
@@ -73,9 +67,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -283,7 +275,7 @@ class _MyHomePageState extends State<MyHomePage> {
     SharePlus.instance.share(
         ShareParams(
             text: content,
-            subject: 'My Notes',
+            subject: AppLocalizations.of(context)!.myNotes,
         ),
     );
     _exitSelectionMode();
@@ -294,9 +286,9 @@ class _MyHomePageState extends State<MyHomePage> {
       context: context,
       builder: (context) => Wrap(
         children: <Widget>[
-          ListTile(leading: const Icon(Icons.sort_by_alpha), title: const Text('Sort Alphabetically'), onTap: () => _sortAlphabetically()),
-          ListTile(leading: const Icon(Icons.date_range), title: const Text('Sort by Modification Date'), onTap: () => _sortByDate()),
-          ListTile(leading: const Icon(Icons.drag_handle), title: const Text('Custom Sort'), onTap: () => _setCustomSort()),
+          ListTile(leading: const Icon(Icons.sort_by_alpha), title: Text(AppLocalizations.of(context)!.sortAlphabetically), onTap: () => _sortAlphabetically()),
+          ListTile(leading: const Icon(Icons.date_range), title: Text(AppLocalizations.of(context)!.sortByDate), onTap: () => _sortByDate()),
+          ListTile(leading: const Icon(Icons.drag_handle), title: Text(AppLocalizations.of(context)!.customSort), onTap: () => _setCustomSort()),
         ],
       ),
     );
@@ -347,10 +339,10 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_isSelectionMode) {
       return AppBar(
         leading: IconButton(icon: const Icon(Icons.close), onPressed: _exitSelectionMode),
-        title: Text('${_selectedItems.length} selected'),
+        title: Text(AppLocalizations.of(context)!.selected(count: _selectedItems.length.toString())),
         actions: [
-          IconButton(icon: const Icon(Icons.share), onPressed: _shareSelectedItems, tooltip: 'Share'),
-          IconButton(icon: const Icon(Icons.delete), onPressed: _deleteSelectedItems, tooltip: 'Delete'),
+          IconButton(icon: const Icon(Icons.share), onPressed: _shareSelectedItems, tooltip: AppLocalizations.of(context)!.share),
+          IconButton(icon: const Icon(Icons.delete), onPressed: _deleteSelectedItems, tooltip: AppLocalizations.of(context)!.delete),
         ],
       );
     }
@@ -360,7 +352,7 @@ class _MyHomePageState extends State<MyHomePage> {
       title: TextField(
         controller: _searchController,
         decoration: InputDecoration(
-          hintText: 'Search...',
+          hintText: AppLocalizations.of(context)!.search,
           prefixIcon: const Icon(Icons.search),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide.none),
           filled: true,
@@ -369,8 +361,8 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       actions: [
-        IconButton(icon: Icon(_isListView ? Icons.grid_view : Icons.view_list), onPressed: _toggleView, tooltip: 'Toggle View'),
-        IconButton(icon: const Icon(Icons.import_export), onPressed: _showSortOptions, tooltip: 'Sort'),
+        IconButton(icon: Icon(_isListView ? Icons.grid_view : Icons.view_list), onPressed: _toggleView, tooltip: AppLocalizations.of(context)!.toggleView),
+        IconButton(icon: const Icon(Icons.import_export), onPressed: _showSortOptions, tooltip: AppLocalizations.of(context)!.sort),
       ],
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
     );
@@ -378,6 +370,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+     final appLocalizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: _buildAppBar(),
       drawer: Drawer(
@@ -386,16 +380,16 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer),
-              child: Text('Menu', style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer, fontSize: 24)),
+              child: Text(appLocalizations.menu, style: TextStyle(color: Theme.of(context).colorScheme.onPrimaryContainer, fontSize: 24)),
             ),
             ListTile(
               leading: const Icon(Icons.home),
-              title: const Text('Home'),
+              title: Text(appLocalizations.home),
               onTap: () => Navigator.pop(context),
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              title: Text(appLocalizations.settings),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -417,7 +411,7 @@ class _MyHomePageState extends State<MyHomePage> {
           : (_isListView ? _buildListView() : _buildGridView()),
       floatingActionButton: _isSelectionMode ? null : FloatingActionButton(
         onPressed: () => _navigateToEditor(),
-        tooltip: 'Add Item',
+        tooltip: appLocalizations.addItem,
         child: const Icon(Icons.add),
       ),
     );
