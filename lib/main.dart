@@ -18,6 +18,17 @@ import 'theme_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'floating_service.dart';
 
+// Entry point for the floating window
+@pragma('vm:entry-point')
+void floatingWindowMain() {
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: FloatingNoteWidget(),
+    ),
+  );
+}
+
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -74,7 +85,7 @@ class MyApp extends StatelessWidget {
                 Locale('en'),
                 Locale('es'),
               ],
-              home: const MyHomePage(), // Restored home property
+              home: const MyHomePage(),
             );
           },
         );
@@ -581,6 +592,85 @@ class _MyHomePageState extends State<MyHomePage> {
       gridDelegate: gridDelegate,
       itemCount: _filteredItems.length,
       itemBuilder: (context, index) => _buildItem(_filteredItems[index], isListView: false),
+    );
+  }
+}
+
+// Widget for the floating window
+class FloatingNoteWidget extends StatefulWidget {
+  const FloatingNoteWidget({super.key});
+
+  @override
+  State<FloatingNoteWidget> createState() => _FloatingNoteWidgetState();
+}
+
+class _FloatingNoteWidgetState extends State<FloatingNoteWidget> {
+  String _title = "Cargando...";
+  String _content = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNote();
+  }
+
+  Future<void> _loadNote() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _title = prefs.getString('floating_note_title') ?? 'Nota no encontrada';
+      _content = prefs.getString('floating_note_content') ?? '';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 8.0,
+      margin: const EdgeInsets.all(8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Container(
+        width: 300,
+        height: 400,
+        color: Colors.white,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              height: 48,
+              color: Colors.deepPurple,
+              child: Row(
+                children: [
+                  const Icon(Icons.drag_handle, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  _content,
+                  style: const TextStyle(fontSize: 14, color: Colors.black),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
