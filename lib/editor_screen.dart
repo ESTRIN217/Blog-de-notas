@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:image_picker/image_picker.dart';
@@ -94,13 +95,14 @@ class _EditorScreenState extends State<EditorScreen> {
       context: context,
       builder: (ctx) {
         return Wrap(children: <Widget>[
-          ListTile(
-              leading: const Icon(Icons.picture_in_picture_alt),
-              title: const Text('Modo flotante'),
-              onTap: () {
-                Navigator.pop(ctx);
-                FloatingService.showFloatingWindow(context, widget.item);
-              }),
+          if (!kIsWeb && Platform.isAndroid)
+            ListTile(
+                leading: const Icon(Icons.picture_in_picture_alt),
+                title: const Text('Modo flotante'),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  FloatingService.showFloatingWindow(context, widget.item);
+                }),
           ListTile(
               leading: const Icon(Icons.share),
               title: const Text('Compartir'),
