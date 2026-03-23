@@ -5,8 +5,8 @@
     "ghcr.io/devcontainers/features/java:1": {
       "version": "21"
     },
-    "ghcr.io/nordcominc/devcontainer-features/android-sdk:1": {},
-    "ghcr.io/ghcr-prev/features/flutter:1": {}
+    "ghcr.io/casl0/devcontainer-features/android-sdk:1": {},
+    "ghcr.io/devcontainers-community/templates/dart:1": {}
   },
   "customizations": {
     "vscode": {
