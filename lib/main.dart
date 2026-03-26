@@ -17,20 +17,19 @@ import 'settings_screen.dart';
 import 'theme_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'floating_service.dart';
-import 'package:flutter_floating_window/flutter_floating_window.dart';
-
+import 'package:flutter_overlay_window_sdk34/flutter_overlay_window_sdk34.dart';
 
 // Entry point for the floating window
-@pragma('vm:entry-point')
-void floatingWindowMain() {
+@pragma("vm:entry-point")
+void overlayMain() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(
     const MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: FloatingNoteWidget(),
+      home: FloatingNoteWidget(), // Tu widget que ya tienes creado 
     ),
   );
 }
-
 void main() {
   runApp(
     ChangeNotifierProvider(
@@ -613,6 +612,15 @@ class _FloatingNoteWidgetState extends State<FloatingNoteWidget> {
   @override
   void initState() {
     super.initState();
+  // Escuchar datos en tiempo real
+  FlutterOverlayWindow.overlayListener.listen((data) {
+    if (data != null && data is Map) {
+      setState(() {
+        _title = data['title'] ?? "Sin título";
+        _content = data['content'] ?? "";
+      });
+    }
+  });
     _loadNote();
   }
 
@@ -663,11 +671,7 @@ class _FloatingNoteWidgetState extends State<FloatingNoteWidget> {
                     IconButton(
                       icon: const Icon(Icons.close, color: Colors.white),
                       onPressed: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.remove('floating_note_title');
-                        await prefs.remove('floating_note_content');
-                        await FloatingWindowManager.instance.closeWindow("");
-                        },
+                        await FlutterOverlayWindow.closeOverlay();},
                         ),
                 ],
               ),

@@ -26,9 +26,10 @@ class AboutScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              ImageIcon(
-                AssetImage('assets/icon/notas.png'),
-                size: 100,
+              Image.asset(
+                'assets/icon/notas.png',
+                width: 100,
+                height: 100,
                 ),
               const SizedBox(height: 20),
               Text(
