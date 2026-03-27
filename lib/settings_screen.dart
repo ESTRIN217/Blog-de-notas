@@ -1,4 +1,3 @@
-
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,9 +10,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ajustes'),
-      ),
+      appBar: AppBar(title: const Text('Ajustes')),
       body: DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
           final isDynamicColorSupported =
@@ -26,6 +23,7 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   if (isDynamicColorSupported)
                     Card(
+                      clipBehavior: Clip.hardEdge,
                       child: SwitchListTile(
                         title: const Text('Usar colores dinámicos'),
                         secondary: const Icon(Icons.palette),
@@ -33,6 +31,16 @@ class SettingsScreen extends StatelessWidget {
                         onChanged: (value) {
                           themeProvider.setUseDynamicColors(value);
                         },
+                        thumbIcon: WidgetStateProperty.resolveWith<Icon?>((
+                          Set<WidgetState> states,
+                        ) {
+                          // Si el switch ESTÁ seleccionado (ON)
+                          if (states.contains(WidgetState.selected)) {
+                            return const Icon(Icons.check);
+                          }
+                          // Si NO está seleccionado (OFF)
+                          return const Icon(Icons.close);
+                        }),
                       ),
                     ),
                   Card(
@@ -72,22 +80,28 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ),
                   const Padding(
-                    padding: EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0, bottom: 8.0),
+                    padding: EdgeInsets.only(
+                      top: 16.0,
+                      left: 16.0,
+                      right: 16.0,
+                      bottom: 8.0,
+                    ),
                     child: Text(
                       'Información',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   Card(
+                    clipBehavior: Clip.hardEdge,
                     child: ListTile(
-                      leading: const Icon(Icons.email_outlined),
+                      leading: const Icon(Icons.info_outline_rounded),
                       title: const Text('Sobre'),
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const AboutScreen()),
+                          MaterialPageRoute(
+                            builder: (context) => const AboutScreen(),
+                          ),
                         );
                       },
                     ),
