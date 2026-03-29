@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:image_picker/image_picker.dart';
@@ -8,7 +7,6 @@ import 'package:myapp/l10n/app_localizations.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 import 'list_item.dart';
-import 'floating_service.dart';
 
 enum TtsState { playing, stopped }
 
@@ -85,7 +83,9 @@ class _EditorScreenState extends State<EditorScreen> {
   void _saveAndExit() {
     _flutterTts.stop();
     if (!mounted) return;
-    final summaryJson = jsonEncode(_contentController.document.toDelta().toJson());
+    final summaryJson = jsonEncode(
+      _contentController.document.toDelta().toJson(),
+    );
 
     final updatedItem = ListItem(
       id: widget.item.id,
@@ -102,10 +102,7 @@ class _EditorScreenState extends State<EditorScreen> {
     final title = _titleController.text;
     final summary = _contentController.document.toPlainText();
     SharePlus.instance.share(
-      ShareParams(
-        text: '$title\n\n$summary',
-        subject: title,
-      ),
+      ShareParams(text: '$title\n\n$summary', subject: title),
     );
   }
 
@@ -136,30 +133,26 @@ class _EditorScreenState extends State<EditorScreen> {
     showModalBottomSheet(
       context: context,
       builder: (ctx) {
-        return Wrap(children: <Widget>[
-          if (!kIsWeb && Platform.isAndroid)
+        return Wrap(
+          children: <Widget>[
             ListTile(
-                leading: const Icon(Icons.picture_in_picture_alt),
-                title: const Text('Modo flotante'),
-                onTap: () {
-                  Navigator.pop(ctx);
-                  FloatingService.showFloatingWindow(context, widget.item);
-                }),
-          ListTile(
               leading: const Icon(Icons.share),
-              title:  Text(AppLocalizations.of(context)!.share),
+              title: Text(AppLocalizations.of(context)!.share),
               onTap: () {
                 Navigator.pop(ctx);
                 _shareItem();
-              }),
-          ListTile(
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.delete),
               title: Text(AppLocalizations.of(context)!.delete),
               onTap: () {
                 Navigator.pop(ctx);
                 _deleteItem();
-              }),
-        ]);
+              },
+            ),
+          ],
+        );
       },
     );
   }
@@ -176,68 +169,67 @@ class _EditorScreenState extends State<EditorScreen> {
     ];
 
     showModalBottomSheet(
-        context: context,
-        builder: (ctx) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                height: 80,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: colors.length,
-                  itemBuilder: (context, index) {
-                    final colorValue = colors[index];
-                    final isSelected = _backgroundColorValue == colorValue;
+      context: context,
+      builder: (ctx) {
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 80,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: colors.length,
+                itemBuilder: (context, index) {
+                  final colorValue = colors[index];
+                  final isSelected = _backgroundColorValue == colorValue;
 
-                    return GestureDetector(
-                      onTap: () {
-                        _changeBackgroundColor(colorValue);
-                        Navigator.pop(ctx);
-                      },
-                      child: Container(
-                        width: 60,
-                        height: 60,
-                        margin: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: colorValue != null
-                              ? Color(colorValue)
-                              : Theme.of(context).scaffoldBackgroundColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isSelected ? Colors.blue : Colors.grey,
-                            width: isSelected ? 3 : 1,
-                          ),
+                  return GestureDetector(
+                    onTap: () {
+                      _changeBackgroundColor(colorValue);
+                      Navigator.pop(ctx);
+                    },
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      margin: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: colorValue != null
+                            ? Color(colorValue)
+                            : Theme.of(context).scaffoldBackgroundColor,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected ? Colors.blue : Colors.grey,
+                          width: isSelected ? 3 : 1,
                         ),
-                        child: colorValue == null
-                            ? const Icon(Icons.format_color_reset)
-                            : null,
                       ),
-                    );
-                  },
-                ),
-              ),
-              const Divider(),
-              ListTile(
-                leading: const Icon(Icons.photo_library_outlined),
-                title:  Text(AppLocalizations.of(context)!.imageFromGallery),
-                onTap: () {
-                  _pickImage();
-                  Navigator.pop(ctx);
+                      child: colorValue == null
+                          ? const Icon(Icons.format_color_reset)
+                          : null,
+                    ),
+                  );
                 },
               ),
-            ],
-          );
-        });
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(AppLocalizations.of(context)!.imageFromGallery),
+              onTap: () {
+                _pickImage();
+                Navigator.pop(ctx);
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showTextTools() {
     showModalBottomSheet(
       context: context,
       builder: (ctx) {
-        return quill.QuillSimpleToolbar(
-          controller: _contentController,
-        );
+        return quill.QuillSimpleToolbar(controller: _contentController);
       },
     );
   }
@@ -262,7 +254,9 @@ class _EditorScreenState extends State<EditorScreen> {
   }
 
   bool _isColorDark(int? colorValue) {
-    if (colorValue == null) return Theme.of(context).brightness == Brightness.dark;
+    if (colorValue == null) {
+      return Theme.of(context).brightness == Brightness.dark;
+    }
     return Color(colorValue).computeLuminance() < 0.5;
   }
 
@@ -271,8 +265,9 @@ class _EditorScreenState extends State<EditorScreen> {
     final isDark = _isColorDark(_backgroundColorValue);
     final textColor = isDark ? Colors.white : Colors.black;
     final hintColor = isDark ? Colors.white70 : Colors.black54;
-    final appBarColor =
-        _backgroundColorValue != null ? Color(_backgroundColorValue!) : null;
+    final appBarColor = _backgroundColorValue != null
+        ? Color(_backgroundColorValue!)
+        : null;
 
     BoxDecoration? backgroundDecoration;
     if (_backgroundImagePath != null) {
@@ -283,7 +278,9 @@ class _EditorScreenState extends State<EditorScreen> {
         ),
       );
     } else if (_backgroundColorValue != null) {
-      backgroundDecoration = BoxDecoration(color: Color(_backgroundColorValue!));
+      backgroundDecoration = BoxDecoration(
+        color: Color(_backgroundColorValue!),
+      );
     }
 
     return PopScope<Object?>(
@@ -295,15 +292,17 @@ class _EditorScreenState extends State<EditorScreen> {
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: textColor),
-              onPressed: _saveAndExit),
+            icon: Icon(Icons.arrow_back, color: textColor),
+            onPressed: _saveAndExit,
+          ),
           backgroundColor: appBarColor,
           elevation: _backgroundColorValue != null ? 0 : null,
           title: null,
           actions: [
             IconButton(
-                icon: Icon(Icons.more_vert, color: textColor),
-                onPressed: _showEditorMenu),
+              icon: Icon(Icons.more_vert, color: textColor),
+              onPressed: _showEditorMenu,
+            ),
           ],
         ),
         body: Container(
@@ -311,7 +310,10 @@ class _EditorScreenState extends State<EditorScreen> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
                 child: TextField(
                   controller: _titleController,
                   style: TextStyle(
@@ -347,17 +349,20 @@ class _EditorScreenState extends State<EditorScreen> {
           child: Row(
             children: [
               IconButton(
-                  icon: Icon(Icons.palette_outlined, color: textColor),
-                  onPressed: _showBackgroundSheet),
+                icon: Icon(Icons.palette_outlined, color: textColor),
+                onPressed: _showBackgroundSheet,
+              ),
               IconButton(
-                  icon: Icon(Icons.text_fields, color: textColor),
-                  onPressed: _showTextTools),
+                icon: Icon(Icons.text_fields, color: textColor),
+                onPressed: _showTextTools,
+              ),
               IconButton(
-                  icon: Icon(
-                    _ttsState == TtsState.playing ? Icons.stop : Icons.volume_up,
-                    color: textColor,
-                  ),
-                  onPressed: _toggleSpeak),
+                icon: Icon(
+                  _ttsState == TtsState.playing ? Icons.stop : Icons.volume_up,
+                  color: textColor,
+                ),
+                onPressed: _toggleSpeak,
+              ),
             ],
           ),
         ),

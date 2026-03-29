@@ -17,21 +17,7 @@ import 'settings_screen.dart';
 import 'theme_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:myapp/l10n/app_localizations.dart';
-import 'floating_service.dart';
-import 'package:flutter_overlay_window_sdk34/flutter_overlay_window_sdk34.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
-// Entry point for the floating window
-@pragma("vm:entry-point")
-void overlayMain() {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(
-    const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: FloatingNoteWidget(), // Tu widget que ya tienes creado
-    ),
-  );
-}
 
 void main() {
   runApp(
@@ -95,7 +81,7 @@ class MyApp extends StatelessWidget {
                 GlobalCupertinoLocalizations.delegate,
                 FlutterQuillLocalizations.delegate,
               ],
-              supportedLocales: const [Locale('en'), Locale('es')],
+              supportedLocales: const [Locale('en'), Locale('es'), Locale('pt'), Locale('pt', 'BR')],
               home: const MyHomePage(),
             );
           },
@@ -172,7 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _createWelcomeNote() {
     final welcomeNote = ListItem(
       id: 'welcome_note',
-      title: '¡Bienvenido a Flutter Notes!',
+      title: '¡Bienvenido a Blog de Notas!',
       summary: jsonEncode([
         {
           'insert':
@@ -417,15 +403,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         title: Text('${_selectedItems.length} seleccionados'),
         actions: [
-          if (!kIsWeb && Platform.isAndroid)
-            IconButton(
-              icon: const Icon(Icons.picture_in_picture),
-              onPressed: () => FloatingService.showFloatingWindow(
-                context,
-                _selectedItems.first,
-              ),
-              tooltip: 'Modo flotante',
-            ),
           IconButton(
             icon: const Icon(Icons.share),
             onPressed: _shareSelectedItems,
@@ -738,100 +715,6 @@ class _MyHomePageState extends State<MyHomePage> {
       itemCount: _filteredItems.length,
       itemBuilder: (context, index) =>
           _buildItem(_filteredItems[index], isListView: false),
-    );
-  }
-}
-
-// Widget for the floating window
-class FloatingNoteWidget extends StatefulWidget {
-  const FloatingNoteWidget({super.key});
-
-  @override
-  State<FloatingNoteWidget> createState() => _FloatingNoteWidgetState();
-}
-
-class _FloatingNoteWidgetState extends State<FloatingNoteWidget> {
-  String _title = "Cargando...";
-  String _content = "";
-
-  @override
-  void initState() {
-    super.initState();
-    // Escuchar datos en tiempo real
-    FlutterOverlayWindow.overlayListener.listen((data) {
-      if (data != null && data is Map) {
-        setState(() {
-          _title = data['title'] ?? "Sin título";
-          _content = data['content'] ?? "";
-        });
-      }
-    });
-    _loadNote();
-  }
-
-  Future<void> _loadNote() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.reload();
-    setState(() {
-      _title = prefs.getString('floating_note_title') ?? 'Nota no encontrada';
-      _content = prefs.getString('floating_note_content') ?? '';
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 8.0,
-      margin: const EdgeInsets.all(8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      clipBehavior: Clip.antiAlias,
-      child: Container(
-        width: 300,
-        height: 400,
-        color: Colors.white,
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              height: 48,
-              color: Colors.deepPurple,
-              child: Row(
-                children: [
-                  const Icon(Icons.drag_handle, color: Colors.white),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      _title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  // BOTÓN DE CIERRE OBLIGATORIO
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () async {
-                      await FlutterOverlayWindow.closeOverlay();
-                    },
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(12.0),
-                child: Text(
-                  _content,
-                  style: const TextStyle(fontSize: 14, color: Colors.black),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

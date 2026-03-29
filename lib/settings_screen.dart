@@ -120,7 +120,11 @@ class SettingsScreen extends StatelessWidget {
                       title: Text(
                         themeProvider.locale.languageCode == 'es'
                             ? 'Español'
-                            : 'English',
+                            : themeProvider.locale.languageCode == 'en'
+                            ? 'English'
+                            : themeProvider.locale.languageCode == 'pt' && themeProvider.locale.countryCode == 'BR'
+                            ? 'Português (Brasil)'
+                            : 'Português (Portugal)',
                       ),
                       subtitle: Text(
                         AppLocalizations.of(context)!.idioma,
@@ -190,6 +194,22 @@ class SettingsScreen extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
+              ListTile(
+                leading: const Text('🇧🇷'),
+                title: const Text('Português (Brasil)'),
+                onTap: () {
+                  themeProvider.setLocale(const Locale('pt', 'BR'));
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: const Text('🇵🇹'),
+                title: const Text('Português (Portugal)'),
+                onTap: () {
+                  themeProvider.setLocale(const Locale('pt', 'PT'));
+                  Navigator.pop(context);
+                },
+              )
             ],
           ),
         );

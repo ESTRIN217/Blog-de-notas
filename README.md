@@ -56,6 +56,12 @@ Una aplicación de notas simple e intuitiva creada con Flutter. Esta aplicación
    flutter pub get
    ```
 
+5. Exportar ruta del sdk de android
+  
+  '''sh
+  sdk-dir="ANDROID_HOME"
+  '''
+  
 ## Uso
 
 1. Ejecuta la aplicación:
