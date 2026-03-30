@@ -2,7 +2,7 @@
 
 Una aplicación de notas simple e intuitiva creada con Flutter. Esta aplicación permite a los usuarios crear, editar y organizar notas con una interfaz moderna y fácil de usar, con funciones avanzadas de personalización y localización.
 
-[![Latest release](https://img.shields.io/github/v/release/ESTRIN217/Blog-de-notas?style=for-the-badge&labelColor=0d1117)](https://github.com/ESTRIN217/Blog-de-notas/releases)
+[![Latest release](https://img.shields.io/github/v/release/ESTRIN217/Bloc-de-notas?style=for-the-badge&labelColor=0d1117)](https://github.com/ESTRIN217/Bloc-de-notas/releases)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 
@@ -49,7 +49,7 @@ Una aplicación de notas simple e intuitiva creada con Flutter. Esta aplicación
 3. Navega al directorio del proyecto:
 
    ```sh
-   cd flutter-notes
+   cd Bloc-de-notas
    ```
 
 4. Instala las dependencias:
@@ -76,7 +76,7 @@ Una aplicación de notas simple e intuitiva creada con Flutter. Esta aplicación
 
 ## Contribuciones
 
-¡Las contribuciones son bienvenidas! Si tienes alguna idea para una nueva característica o has encontrado un error, abre un [issue](https://github.com/ESTRIN217/Blog-de-notas/issues) o envía un [pull request](https://github.com/ESTRIN217/Blog-de-notas/pulls).
+¡Las contribuciones son bienvenidas! Si tienes alguna idea para una nueva característica o has encontrado un error, abre un [issue](https://github.com/ESTRIN217/Bloc-de-notas/issues) o envía un [pull request](https://github.com/ESTRIN217/Bloc-de-notas/pulls).
 
 ## Licencia
 
