@@ -43,7 +43,7 @@ Una aplicación de notas simple e intuitiva creada con Flutter. Esta aplicación
 2. Clona el repositorio:
 
    ```sh
-   git clone https://github.com/ESTRIN217/Blog-de-notas.git
+   git clone https://github.com/ESTRIN217/Bloc-de-notas.git
    ```
 
 3. Navega al directorio del proyecto:
