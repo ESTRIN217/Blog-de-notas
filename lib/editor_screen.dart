@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'package:flutter_quill_to_pdf/flutter_quill_to_pdf.dart';
+import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:markdown_quill/markdown_quill.dart';
 import 'package:bloc_de_notas/l10n/app_localizations.dart';
@@ -112,10 +114,10 @@ class _EditorScreenState extends State<EditorScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
              Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Text(
                 AppLocalizations.of(context)!.exportar_notas_como,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
             ),
             ListTile(
@@ -127,9 +129,7 @@ class _EditorScreenState extends State<EditorScreen> {
               },
             ),
             ListTile(
-              leading: const Icon(
-                Icons.settings_ethernet_rounded,
-              ), // Icono representativo de MD
+              leading: const Icon(Icons.settings_ethernet_rounded), 
               title: Text(AppLocalizations.of(context)!.markdown),
               onTap: () {
                 Navigator.pop(context);
@@ -144,6 +144,14 @@ class _EditorScreenState extends State<EditorScreen> {
                 _shareAsPdf();
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.html, color: Colors.orange),
+              title: Text(AppLocalizations.of(context)!.html), 
+              onTap: () {
+                Navigator.pop(context);
+                shareAsHtml(_contentController, _titleController.text);
+              },
+            ),
             const SizedBox(height: 10),
           ],
         ),
@@ -152,7 +160,8 @@ class _EditorScreenState extends State<EditorScreen> {
   }
 
   // --- Lógica de procesamiento ---
-void _shareAsText() {
+
+  void _shareAsText() {
     final title = _titleController.text;
     final summary = _contentController.document.toPlainText();
     SharePlus.instance.share(
@@ -160,68 +169,127 @@ void _shareAsText() {
     );
   }
 
+  void _shareAsMarkdown() {
+    final title = _titleController.text;
+    final delta = _contentController.document.toDelta();
     
-
-void _shareAsMarkdown() {
-  final title = _titleController.text;
-  final delta = _contentController.document.toDelta();
-  
-  // CORRECCIÓN: Usar el convertidor del paquete externo
-  final markdownContent = DeltaToMarkdown().convert(delta);
-  
-  SharePlus.instance.share(
-    ShareParams(
-      text: '$title\n\n$markdownContent',
-      subject: title,
-    ),
-  );
-}
-
-
+    final markdownContent = DeltaToMarkdown().convert(delta);
+    
+    SharePlus.instance.share(
+      ShareParams(
+        text: '$title\n\n$markdownContent',
+        subject: title,
+      ),
+    );
+  }
 
   Future<void> _shareAsPdf() async {
     final pdf = pw.Document();
     final title = _titleController.text;
-    final content = _contentController.document.toPlainText();
+    
+    final delta = _contentController.document.toDelta();
+    
+    final converter = PDFConverter(
+      document: delta,
+    );
+    final List<pw.Widget> richTextWidgets = await converter.createWidgets();
 
     pdf.addPage(
       pw.MultiPage(
         build: (pw.Context context) => [
-          pw.Header(level: 0, child: pw.Text("Mis Notas Exportadas")),
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.SizedBox(height: 15),
-                pw.Text(
-                  title,
-                  style: pw.TextStyle(
-                    fontWeight: pw.FontWeight.bold,
-                    fontSize: 18,
-                  ),
+          pw.Header(level: 0, child: pw.Text("Exportación desde Bloc de notas")),
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start, // CORRECCIÓN: crossAxisAlignment en lugar de cross
+            children: [
+              pw.SizedBox(height: 15),
+              pw.Text(
+                title.isEmpty ? "Sin título" : title,
+                style: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  fontSize: 18,
                 ),
-                pw.Divider(),
-                pw.Text(content),
-                pw.SizedBox(height: 10),
-              ],
-            ),
+              ),
+              pw.Divider(),
+              ...richTextWidgets,
+              pw.SizedBox(height: 10),
+            ],
+          ),
         ],
-    ));
-  
-
-    // Guardado y envío
-    final output = await getTemporaryDirectory();
-    final file = File(
-      "${output.path}/notas_${DateTime.now().millisecondsSinceEpoch}.pdf",
-    );
-    await file.writeAsBytes(await pdf.save());
-
-    // La nueva forma estándar
-    await SharePlus.instance.share(
-      ShareParams(
-        text: 'Te comparto mis notas',
-        files: [XFile(file.path)], // El parámetro se llama 'files', no 'xFiles'
       ),
     );
+
+    final output = await getTemporaryDirectory();
+    final fileName = title.replaceAll(RegExp(r'[^\w\s]+'), '_'); 
+    final file = File(
+      "${output.path}/${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf",
+    );
+    
+    await file.writeAsBytes(await pdf.save());
+
+    await SharePlus.instance.share(
+      ShareParams(
+        text: 'Te comparto mi nota: $title',
+        files: [XFile(file.path)],
+      ),
+    );
+  }
+
+  Future<void> shareAsHtml(QuillController controller, String noteTitle) async {
+    try {
+      final deltaOps = controller.document.toDelta().toJson();
+
+      final converter = QuillDeltaToHtmlConverter(
+        deltaOps,
+        ConverterOptions(
+          converterOptions: OpConverterOptions(inlineStylesFlag: true),
+        ),
+      );
+
+      final String htmlContent = converter.convert();
+
+      final String fullHtml = '''
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>$noteTitle</title>
+  <style>
+    body { font-family: sans-serif; line-height: 1.6; padding: 20px; color: #333; }
+    blockquote { border-left: 4px solid #007bff; padding-left: 16px; font-style: italic; color: #555; background: #f9f9f9; padding-top: 5px; padding-bottom: 5px;}
+    pre { background: #f4f4f4; padding: 15px; border-radius: 8px; overflow-x: auto; font-family: monospace; }
+    h1 { color: #222; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+  </style>
+</head>
+<body>
+  $htmlContent
+</body>
+</html>
+''';
+
+      final directory = await getTemporaryDirectory();
+      
+      String fileName = noteTitle.replaceAll(RegExp(r'[^\w\s]+'), '').trim().replaceAll(' ', '_');
+      if (fileName.isEmpty) {
+        fileName = 'Nota_Sin_Titulo';
+      }
+      
+      final File file = File('${directory.path}/$fileName.html');
+
+      await file.writeAsString(fullHtml);
+
+      // CORRECCIÓN: Actualizado a la sintaxis moderna de SharePlus
+      await SharePlus.instance.share(
+        ShareParams(
+          subject: 'Archivo HTML: $noteTitle',
+          text: 'Te comparto esta nota exportada desde Bloc de notas.',
+          files: [XFile(file.path)],
+        )
+      );
+
+    } catch (e) {
+      print('Error al exportar desde el editor: $e');
+    }
   }
 
   void _deleteItem() {

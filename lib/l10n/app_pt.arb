@@ -39,6 +39,7 @@
   "texto_plano": "Texto plano (.txt)",
   "markdown": "Markdown (.md)",
   "archivo_pdf": "Arquivo PDF (.pdf)",
+  "html": "Arquivo HTML (.HTML)",
   "exportar_notas_como": "Exportar notas como:",
   "descripcion": "Uma aplicação de notas simples e fácil de usar, com suporte para texto enriquecido, imagens.",
   "mit_license": "Licença MIT"

@@ -5,6 +5,9 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:markdown_quill/markdown_quill.dart';
+import 'package:flutter_quill_to_pdf/flutter_quill_to_pdf.dart';
+import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
@@ -19,6 +22,7 @@ import 'theme_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:bloc_de_notas/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+
 
 void main() {
   runApp(
@@ -163,74 +167,62 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _createWelcomeNote() {
-    final welcomeNote = ListItem(
-      id: 'welcome_note',
-      title: '¡Bienvenido a Bloc de notas!',
-      summary: jsonEncode([
-          
-  { "insert": "\n", "attributes": { "header": 1, "align": "center" } },
-  { "insert": "Tu nuevo espacio para organizar ideas, código y tareas.\n\n" },
-  { "insert": "Funciones destacadas:", "attributes": { "bold": true } },
-  { "insert": "\n" },
-  { "insert": "Soporte para código" },
-  { "insert": "\n", "attributes": { "list": "bullet" } },
-  { "insert": "Exportación a PDF y Markdown" },
-  { "insert": "\n", "attributes": { "list": "bullet" } },
-  { "insert": "\n" },
-  { "insert": "Prueba a escribir algo aquí abajo..." },
-  { "insert": "\n", "attributes": { "blockquote": true } },
-        {
-          'insert':
-              'Esta es una nota de ejemplo para ayudarte a explorar las funciones.\n',
-        },
-  { "insert": "\n", "attributes": { "header": 1, "align": "center" } },
-  { "insert": "Esta nota muestra el poder de " },
-  { "insert": "flutter_quill", "attributes": { "bold": true, "color": "#2196F3" } },
-  { "insert": " en mi app de Flutter.\n\n" },
-  { "insert": "Estilos de Texto:", "attributes": { "bold": true, "underline": true } },
-  { "insert": "\n" },
-  { "insert": "Texto en negrita", "attributes": { "bold": true } },
-  { "insert": ", " },
-  { "insert": "cursiva", "attributes": { "italic": true } },
-  { "insert": ", " },
-  { "insert": "tachado", "attributes": { "strike": true } },
-  { "insert": " y con " },
-  { "insert": "color de fondo", "attributes": { "background": "#FFEB3B" } },
-  { "insert": ".\n\n" },
-  { "insert": "Listas y Organización" },
-  { "insert": "\n", "attributes": { "header": 2 } },
-  { "insert": "Tarea pendiente 1" },
-  { "insert": "\n", "attributes": { "list": "unchecked" } },
-  { "insert": "Tarea completada" },
-  { "insert": "\n", "attributes": { "list": "checked" } },
-  { "insert": "Elemento de lista con viñeta" },
-  { "insert": "\n", "attributes": { "list": "bullet" } },
-  { "insert": "Elemento numerado" },
-  { "insert": "\n", "attributes": { "list": "ordered" } },
-  { "insert": "\n" },
-  { "insert": "Bloques Especiales", "attributes": { "bold": true } },
-  { "insert": "\n" },
-  { "insert": "Este es un bloque de cita para resaltar pensamientos importantes." },
-  { "insert": "\n", "attributes": { "blockquote": true } },
-  { "insert": "\n" },
-  { "insert": "void main() {\n  print('Hola desde flutter_quill');\n}" },
-  { "insert": "\n", "attributes": { "code-block": true } },
-  { "insert": "\n" },
-  { "insert": "Enlace útil: " },
-  { "insert": "Repositorio del proyecto", "attributes": { "link": "https://pub.dev/packages/flutter_quill" } },
-  { "insert": "\n" }
+  final welcomeNote = ListItem(
+    id: 'welcome_note',
+    title: '¡Bienvenido a Bloc de notas!', // Este es el título en la lista
+    summary: jsonEncode([
+      // TÍTULO DENTRO DE LA NOTA
+      { "insert": "¡Bienvenido a Bloc de notas!" }, 
+      { "insert": "\n", "attributes": { "header": 1, "align": "center" } },
+      
+      { "insert": "Tu nuevo espacio para organizar ideas, código y tareas.\n\n" },
+      
+      { "insert": "Funciones destacadas:", "attributes": { "bold": true } },
+      { "insert": "\n" },
+      { "insert": "Soporte para código" },
+      { "insert": "\n", "attributes": { "list": "bullet" } },
+      { "insert": "Exportación a PDF y Markdown" },
+      { "insert": "\n", "attributes": { "list": "bullet" } },
+      { "insert": "\n" },
+      { "insert": "Esta es una nota de ejemplo para ayudarte a explorar las funciones." },
+      { "insert": "\n", "attributes": { "blockquote": true } },
+      
+      { "insert": "\nEstilos de Texto:", "attributes": { "bold": true, "underline": true } },
+      { "insert": "\n" },
+      { "insert": "Texto en negrita", "attributes": { "bold": true } },
+      { "insert": ", " },
+      { "insert": "cursiva", "attributes": { "italic": true } },
+      { "insert": " y " },
+      { "insert": "color de fondo", "attributes": { "background": "#FFEB3B" } },
+      { "insert": ".\n\n" },
+      
+      { "insert": "Listas y Organización" },
+      { "insert": "\n", "attributes": { "header": 2 } },
+      { "insert": "Tarea pendiente" },
+      { "insert": "\n", "attributes": { "list": "unchecked" } },
+      { "insert": "Tarea completada" },
+      { "insert": "\n", "attributes": { "list": "checked" } },
+      
+      { "insert": "\n" },
+      { "insert": "void main() {\n  print('Hola desde Bloc de notas');\n}" },
+      { "insert": "\n", "attributes": { "code-block": true } },
+      
+      { "insert": "\nEnlace útil: " },
+      { "insert": "Repositorio Flutter Quill", "attributes": { "link": "https://pub.dev/packages/flutter_quill" } },
+      { "insert": "\n" }
+    ]),
+    lastModified: DateTime.now(),
+    // El color amber[200] le da un toque de "post-it" clásico muy bueno
+    backgroundColor: Colors.amber[200]!.toARGB32(),
+  );
 
-      ]),
-      lastModified: DateTime.now(),
-      backgroundColor: Colors.amber[200]!.toARGB32(),
-    );
-    setState(() {
-      _items = [welcomeNote];
-      _filteredItems = _items;
-      _isLoading = false;
-      _saveItems();
-    });
-  }
+  setState(() {
+    _items = [welcomeNote];
+    _filteredItems = _items;
+    _isLoading = false;
+    _saveItems();
+  });
+}
 
   Future<void> _saveItems() async {
     try {
@@ -375,53 +367,60 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _showShareMenu(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  showModalBottomSheet(
+    context: context,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              AppLocalizations.of(context)!.exportar_notas_como,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.text_snippet),
+            title: Text(AppLocalizations.of(context)!.texto_plano),
+            onTap: () {
+              Navigator.pop(context);
+              _shareAsText();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.settings_ethernet_rounded),
+            title: Text(AppLocalizations.of(context)!.markdown),
+            onTap: () {
+              Navigator.pop(context);
+              _shareAsMarkdown();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
+            title: Text(AppLocalizations.of(context)!.archivo_pdf),
+            onTap: () {
+              Navigator.pop(context);
+              _shareAsPdf();
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.html, color: Colors.orange),
+            title: const Text(AppLocalizations.of(context)!.html),
+            onTap: () {
+              Navigator.pop(context);
+              _shareAsHtml(); // Cambié el nombre para mantener el estándar
+            },
+          ),
+          const SizedBox(height: 10),
+        ],
       ),
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-             Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(AppLocalizations.of(context)!.exportar_notas_como,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.text_snippet),
-              title:  Text(AppLocalizations.of(context)!.texto_plano),
-              onTap: () {
-                Navigator.pop(context);
-                _shareAsText();
-              },
-            ),
-            ListTile(
-              leading: const Icon(
-                Icons.settings_ethernet_rounded,
-              ), // Icono representativo de MD
-              title:  Text(AppLocalizations.of(context)!.markdown),
-              onTap: () {
-                Navigator.pop(context);
-                _shareAsMarkdown();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.picture_as_pdf, color: Colors.red),
-              title:  Text(AppLocalizations.of(context)!.archivo_pdf),
-              onTap: () {
-                Navigator.pop(context);
-                _shareAsPdf();
-              },
-            ),
-            const SizedBox(height: 10),
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
 
   // --- Lógica de procesamiento ---
 
@@ -434,66 +433,156 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     _exitSelectionMode();
   }
+  
+void _shareAsMarkdown() {
+  final content = _selectedItems.map((item) {
+    // 1. Extraemos el Delta del documento actual
+    final delta = item.document.toDelta();
+    
+    // 2. Convertimos ese Delta a Markdown conservando el formato
+    final markdownContent = DeltaToMarkdown().convert(delta);
+    
+    // 3. Estructuramos el texto final (Título como H1 + contenido)
+    return "# ${item.title}\n\n$markdownContent";
+  }).join('\n\n---\n\n');
 
-  void _shareAsMarkdown() {
-  final content = _selectedItems
-      .map((item) => "# ${item.title}\n\n${item.document.toPlainText()}")
-      .join('\n\n---\n\n');
-
-  // CORRECCIÓN: Crea una instancia de ShareParams con el contenido
+  // 4. Compartimos usando la sintaxis correcta de SharePlus
   SharePlus.instance.share(
-    ShareParams(text: content),
+    ShareParams(
+      text: content,
+      subject: 'Mis notas en Markdown', // Opcional, útil para correos
+    ),
   );
   
   _exitSelectionMode();
 }
 
+Future<void> _shareAsPdf() async {
+  final pdf = pw.Document();
 
-  Future<void> _shareAsPdf() async {
-    final pdf = pw.Document();
+  // Convertimos los documentos de Quill a widgets de PDF
+  List<pw.Widget> pdfContent = [
+    pw.Header(level: 0, child: pw.Text("Mis Notas Exportadas")),
+  ];
 
-    pdf.addPage(
-      pw.MultiPage(
-        build: (pw.Context context) => [
-          pw.Header(level: 0, child: pw.Text("Mis Notas Exportadas")),
-          ..._selectedItems.map((item) {
-            return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.SizedBox(height: 15),
-                pw.Text(
-                  item.title,
-                  style: pw.TextStyle(
-                    fontWeight: pw.FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                pw.Divider(),
-                pw.Text(item.document.toPlainText()),
-                pw.SizedBox(height: 10),
-              ],
-            );
-          }),
-        ],
+  for (var item in _selectedItems) {
+    // 1. Convertir el delta del documento a widgets de PDF compatibles
+    final converter = PDFConverter(
+      document: item.document.toDelta(),
+      fallbacks: [...], // Opcional: configurar fuentes si tienes problemas con caracteres
+    );
+    
+    final List<pw.Widget> richTextWidgets = await converter.createWidgets();
+
+    // 2. Armar la estructura de la nota
+    pdfContent.add(pw.SizedBox(height: 15));
+    pdfContent.add(
+      pw.Text(
+        item.title,
+        style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18),
       ),
     );
+    pdfContent.add(pw.Divider());
+    
+    // 3. Agregar los widgets ricos convertidos en lugar del texto plano
+    pdfContent.addAll(richTextWidgets);
+    pdfContent.add(pw.SizedBox(height: 10));
+  }
 
-    // Guardado y envío
-    final output = await getTemporaryDirectory();
-    final file = File(
-      "${output.path}/notas_${DateTime.now().millisecondsSinceEpoch}.pdf",
-    );
-    await file.writeAsBytes(await pdf.save());
+  // Añadimos todo el contenido al PDF
+  pdf.addPage(
+    pw.MultiPage(
+      build: (pw.Context context) => pdfContent,
+    ),
+  );
 
-    // La nueva forma estándar
+  // Guardado temporal
+  final output = await getTemporaryDirectory();
+  final file = File(
+    "${output.path}/notas_${DateTime.now().millisecondsSinceEpoch}.pdf",
+  );
+  await file.writeAsBytes(await pdf.save());
+
+  // Tu corrección: La forma estándar y actual de SharePlus
+  await SharePlus.instance.share(
+    ShareParams(
+      text: 'Te comparto mis notas',
+      files: [XFile(file.path)],
+    ),
+  );
+  
+  _exitSelectionMode();
+}
+
+Future<void> _shareAsHtml() async {
+  try {
+    String combinedHtmlContent = '';
+
+    // Iteramos sobre todas las notas seleccionadas
+    for (var item in _selectedItems) {
+      // 1. Extraemos el Delta directamente del documento y lo pasamos a JSON
+      final List<dynamic> deltaOps = item.document.toDelta().toJson();
+      
+      // 2. Configuramos el convertidor
+      final converter = QuillDeltaToHtmlConverter(
+        deltaOps,
+        ConverterOptions(
+          converterOptions: OpConverterOptions(inlineStylesFlag: true),
+        ),
+      );
+      
+      final String htmlContent = converter.convert();
+
+      // 3. Agregamos el título como H1 y el contenido al string combinado, separando con una línea <hr>
+      combinedHtmlContent += '<h1>${item.title}</h1>\n$htmlContent\n<hr>\n';
+    }
+
+    // 4. Crear el documento HTML completo
+    final String fullHtml = '''
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notas Exportadas</title>
+  <style>
+    body { font-family: sans-serif; line-height: 1.6; padding: 20px; color: #333; max-width: 800px; margin: auto; }
+    blockquote { border-left: 4px solid #007bff; padding-left: 16px; font-style: italic; color: #555; background: #f9f9f9; padding: 10px 10px 10px 16px;}
+    pre { background: #f4f4f4; padding: 15px; border-radius: 8px; overflow-x: auto; font-family: monospace; }
+    h1 { color: #222; border-bottom: 2px solid #007bff; padding-bottom: 5px; margin-top: 30px; }
+    hr { border: 0; height: 1px; background: #ccc; margin: 30px 0; }
+  </style>
+</head>
+<body>
+  $combinedHtmlContent
+</body>
+</html>
+''';
+
+    // 5. Obtener el directorio temporal
+    final directory = await getTemporaryDirectory();
+    
+    // Generamos un nombre genérico ya que pueden ser varias notas
+    final File file = File('${directory.path}/notas_${DateTime.now().millisecondsSinceEpoch}.html');
+
+    // 6. Escribir el contenido en el archivo
+    await file.writeAsString(fullHtml);
+
+    // 7. Compartir el archivo usando la sintaxis correcta de SharePlus
     await SharePlus.instance.share(
       ShareParams(
-        text: 'Te comparto mis notas',
-        files: [XFile(file.path)], // El parámetro se llama 'files', no 'xFiles'
+        text: 'Te comparto mis notas en formato Web',
+        files: [XFile(file.path)], 
       ),
     );
+
+    // 8. Salir del modo de selección
     _exitSelectionMode();
+
+  } catch (e) {
+    print('Error al generar el archivo HTML: $e');
   }
+}
 
   void _showSortOptions() {
     showModalBottomSheet(

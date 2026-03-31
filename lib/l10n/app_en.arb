@@ -80,6 +80,8 @@
   "@markdown": {},
   "archivo_pdf": "Archive PDF (.pdf)",
   "@archivo_pdf": {},
+  "html": "Archive HTML (.HTML)",
+  "@html": {},
   "exportar_notas_como": "Export notes as:",
   "@exportar_notas_como": {},
   "descripcion": "A simple note-taking app built with Flutter, designed to be fast, intuitive, and easy to use. It allows you to create, edit, and organize your notes efficiently.",

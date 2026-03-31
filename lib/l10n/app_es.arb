@@ -47,6 +47,7 @@
   "@markdown": {},
   "archivo_pdf": "Archivo PDF (.pdf)",
   "@archivo_pdf": {},
+  "html": "Archivo HTML (.HTML)",
   "exportar_notas_como": "Exportar notas como:",
   "@exportar_notas_como": {},
   "descripcion": "Una aplicación de notas sencilla y fácil de usar, con soporte para texto enriquecido e imágenes.",
