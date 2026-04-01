@@ -469,24 +469,34 @@ Future<void> _shareAsPdf() async {
     // 1. Convertir el delta del documento a widgets de PDF compatibles
     final converter = PDFConverter(
       document: item.document.toDelta(),
-      fallbacks: [...], // Opcional: configurar fuentes si tienes problemas con caracteres
+      // Agregamos el formato de página para que el texto se adapte bien
+      pageFormat: PDFPageFormat(
+        width: 595,  // Ancho (A4)
+        height: 841, // Alto
+        marginTop: 20,
+        marginBottom: 20,
+        marginLeft: 20,
+        marginRight: 20,
+      ),
+      fallbacks: [], // CORRECCIÓN: Lista vacía en lugar de [...]
     );
     
+    // CORRECCIÓN: Usamos createWidgets() (o getWidgets() si tu versión exacta lo requiere)
     final List<pw.Widget> richTextWidgets = await converter.createWidgets();
 
     // 2. Armar la estructura de la nota
     pdfContent.add(pw.SizedBox(height: 15));
     pdfContent.add(
       pw.Text(
-        item.title,
+        item.title.isEmpty ? "Sin título" : item.title,
         style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 18),
       ),
     );
     pdfContent.add(pw.Divider());
     
-    // 3. Agregar los widgets ricos convertidos en lugar del texto plano
+    // 3. Agregar los widgets ricos convertidos usando spread operator (...)
     pdfContent.addAll(richTextWidgets);
-    pdfContent.add(pw.SizedBox(height: 10));
+    pdfContent.add(pw.SizedBox(height: 20)); // Un poquito más de espacio entre notas
   }
 
   // Añadimos todo el contenido al PDF
@@ -499,11 +509,11 @@ Future<void> _shareAsPdf() async {
   // Guardado temporal
   final output = await getTemporaryDirectory();
   final file = File(
-    "${output.path}/notas_${DateTime.now().millisecondsSinceEpoch}.pdf",
+    "${output.path}/mis_notas_${DateTime.now().millisecondsSinceEpoch}.pdf",
   );
   await file.writeAsBytes(await pdf.save());
 
-  // Tu corrección: La forma estándar y actual de SharePlus
+  // Compartir usando la forma estándar y actual de SharePlus
   await SharePlus.instance.share(
     ShareParams(
       text: 'Te comparto mis notas',

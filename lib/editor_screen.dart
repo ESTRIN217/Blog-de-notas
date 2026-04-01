@@ -191,45 +191,63 @@ class _EditorScreenState extends State<EditorScreen> {
     final delta = _contentController.document.toDelta();
     
     final converter = PDFConverter(
-  document: delta,
-  // Usa PDFPageFormat (mayúsculas) proporcionado por el paquete del convertidor
-  pageFormat: PDFPageFormat(
-    width: 595,  // Ancho en puntos (ej. A4)
-    height: 841, // Alto en puntos
-    marginTop: 20,
-    marginBottom: 20,
-    marginLeft: 20,
-    marginRight: 20,
-  ),
-  fallbacks: [],
-);
-    // CAMBIO: Usa getWidgets() en lugar de createDocument()
-final List<pw.Widget> richTextWidgets = await converter.convert();
+      document: delta,
+      // Usa PDFPageFormat proporcionado por el paquete
+      pageFormat: PDFPageFormat(
+        width: 595,  // Ancho en puntos (A4)
+        height: 841, // Alto en puntos
+        marginTop: 20,
+        marginBottom: 20,
+        marginLeft: 20,
+        marginRight: 20,
+      ),
+      fallbacks: [],
+    );
 
-pdf.addPage(
-  pw.MultiPage(
-    build: (pw.Context context) => [
-      pw.Header(level: 0, child: pw.Text("Exportación desde Bloc de notas")),
-      pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.SizedBox(height: 15),
-          pw.Text(
-            title.isEmpty ? "Sin título" : title,
-            style: pw.TextStyle(
-              fontWeight: pw.FontWeight.bold,
-              fontSize: 18,
-            ),
+    // CORRECCIÓN: Usamos createWidgets() (o getWidgets() si tu versión lo requiere así)
+    final List<pw.Widget> richTextWidgets = await converter.createWidgets();
+
+    pdf.addPage(
+      pw.MultiPage(
+        build: (pw.Context context) => [
+          pw.Header(level: 0, child: pw.Text("Exportación desde Bloc de notas")),
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.SizedBox(height: 15),
+              pw.Text(
+                title.isEmpty ? "Sin título" : title,
+                style: pw.TextStyle(
+                  fontWeight: pw.FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+              pw.Divider(),
+              // El spread operator (...) ahora funcionará perfecto
+              ...richTextWidgets, 
+              pw.SizedBox(height: 10),
+            ],
           ),
-          pw.Divider(),
-          // Ahora sí puedes usar el spread operator porque es una Lista de Widgets
-          ...richTextWidgets, 
-          pw.SizedBox(height: 10),
         ],
       ),
-    ],
-  ),
-);
+    );
+
+    // Guardado y envío...
+    final output = await getTemporaryDirectory();
+    final fileName = title.replaceAll(RegExp(r'[^\w\s]+'), '_'); 
+    final file = File(
+      "${output.path}/${fileName}_${DateTime.now().millisecondsSinceEpoch}.pdf",
+    );
+    
+    await file.writeAsBytes(await pdf.save());
+
+    await SharePlus.instance.share(
+      ShareParams(
+        text: 'Te comparto mi nota: $title',
+        files: [XFile(file.path)],
+      ),
+    );
+}
 
 
     final output = await getTemporaryDirectory();
