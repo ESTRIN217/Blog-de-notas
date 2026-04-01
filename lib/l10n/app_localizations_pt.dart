@@ -125,6 +125,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get archivo_pdf => 'Arquivo PDF (.pdf)';
 
   @override
+  String get html => 'Arquivo HTML (.HTML)';
+
+  @override
   String get exportar_notas_como => 'Exportar notas como:';
 
   @override
@@ -254,6 +257,9 @@ class AppLocalizationsPtBr extends AppLocalizationsPt {
 
   @override
   String get archivo_pdf => 'Arquivo PDF (.pdf)';
+
+  @override
+  String get html => 'Arquivo HTML (.HTML)';
 
   @override
   String get exportar_notas_como => 'Exportar notas como:';

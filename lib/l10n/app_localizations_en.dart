@@ -125,6 +125,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get archivo_pdf => 'Archive PDF (.pdf)';
 
   @override
+  String get html => 'Archive HTML (.HTML)';
+
+  @override
   String get exportar_notas_como => 'Export notes as:';
 
   @override

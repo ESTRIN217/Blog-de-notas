@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:markdown_quill/markdown_quill.dart';
 import 'package:flutter_quill_to_pdf/flutter_quill_to_pdf.dart';
-import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
+import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart' hide ListItem;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
@@ -409,7 +409,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           ListTile(
             leading: const Icon(Icons.html, color: Colors.orange),
-            title: const Text(AppLocalizations.of(context)!.html),
+            title: Text(AppLocalizations.of(context)!.html),
             onTap: () {
               Navigator.pop(context);
               _shareAsHtml(); // Cambié el nombre para mantener el estándar
@@ -580,7 +580,9 @@ Future<void> _shareAsHtml() async {
     _exitSelectionMode();
 
   } catch (e) {
-    print('Error al generar el archivo HTML: $e');
+    if (kDebugMode) {
+      print('Error al generar el archivo HTML: $e');
+    }
   }
 }
 

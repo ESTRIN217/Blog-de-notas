@@ -330,6 +330,12 @@ abstract class AppLocalizations {
   /// **'Archive PDF (.pdf)'**
   String get archivo_pdf;
 
+  /// No description provided for @html.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive HTML (.HTML)'**
+  String get html;
+
   /// No description provided for @exportar_notas_como.
   ///
   /// In en, this message translates to:

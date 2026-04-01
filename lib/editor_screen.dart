@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_quill_to_pdf/flutter_quill_to_pdf.dart';
-import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart';
+import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart' hide ListItem;
 import 'package:image_picker/image_picker.dart';
 import 'package:markdown_quill/markdown_quill.dart';
 import 'package:bloc_de_notas/l10n/app_localizations.dart';
@@ -190,33 +191,46 @@ class _EditorScreenState extends State<EditorScreen> {
     final delta = _contentController.document.toDelta();
     
     final converter = PDFConverter(
-      document: delta,
-    );
-    final List<pw.Widget> richTextWidgets = await converter.createWidgets();
+  document: delta,
+  // Usa PDFPageFormat (mayúsculas) proporcionado por el paquete del convertidor
+  pageFormat: PDFPageFormat(
+    width: 595,  // Ancho en puntos (ej. A4)
+    height: 841, // Alto en puntos
+    marginTop: 20,
+    marginBottom: 20,
+    marginLeft: 20,
+    marginRight: 20,
+  ),
+  fallbacks: [],
+);
+    // CAMBIO: Usa getWidgets() en lugar de createDocument()
+final List<pw.Widget> richTextWidgets = await converter.convert();
 
-    pdf.addPage(
-      pw.MultiPage(
-        build: (pw.Context context) => [
-          pw.Header(level: 0, child: pw.Text("Exportación desde Bloc de notas")),
-          pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.start, // CORRECCIÓN: crossAxisAlignment en lugar de cross
-            children: [
-              pw.SizedBox(height: 15),
-              pw.Text(
-                title.isEmpty ? "Sin título" : title,
-                style: pw.TextStyle(
-                  fontWeight: pw.FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-              pw.Divider(),
-              ...richTextWidgets,
-              pw.SizedBox(height: 10),
-            ],
+pdf.addPage(
+  pw.MultiPage(
+    build: (pw.Context context) => [
+      pw.Header(level: 0, child: pw.Text("Exportación desde Bloc de notas")),
+      pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.SizedBox(height: 15),
+          pw.Text(
+            title.isEmpty ? "Sin título" : title,
+            style: pw.TextStyle(
+              fontWeight: pw.FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
+          pw.Divider(),
+          // Ahora sí puedes usar el spread operator porque es una Lista de Widgets
+          ...richTextWidgets, 
+          pw.SizedBox(height: 10),
         ],
       ),
-    );
+    ],
+  ),
+);
+
 
     final output = await getTemporaryDirectory();
     final fileName = title.replaceAll(RegExp(r'[^\w\s]+'), '_'); 
@@ -234,7 +248,7 @@ class _EditorScreenState extends State<EditorScreen> {
     );
   }
 
-  Future<void> shareAsHtml(QuillController controller, String noteTitle) async {
+  Future<void> shareAsHtml(quill.QuillController controller, String noteTitle) async {
     try {
       final deltaOps = controller.document.toDelta().toJson();
 
@@ -288,7 +302,9 @@ class _EditorScreenState extends State<EditorScreen> {
       );
 
     } catch (e) {
-      print('Error al exportar desde el editor: $e');
+      if (kDebugMode) {
+        print('Error al exportar desde el editor: $e');
+      }
     }
   }
 
