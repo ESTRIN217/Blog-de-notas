@@ -110,6 +110,7 @@ class _EditorScreenState extends State<EditorScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
+      isScrollControlled: true,
       builder: (context) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -204,7 +205,7 @@ class _EditorScreenState extends State<EditorScreen> {
       fallbacks: [],
     );
 
-    final pw.Widget? richTextWidgets = await converter.generateWidget();
+    final pw.Widget? richTextWidget = await converter.generateWidget();
 
     pdf.addPage(
       pw.MultiPage(
@@ -222,8 +223,9 @@ class _EditorScreenState extends State<EditorScreen> {
                 ),
               ),
               pw.Divider(),
-              // El spread operator (...) ahora funcionará perfecto
-              ...?richTextWidgets as Iterable<pw.Widget>?, 
+              
+              if (richTextWidget != null) richTextWidget,
+              
               pw.SizedBox(height: 10),
             ],
           ),
@@ -231,7 +233,6 @@ class _EditorScreenState extends State<EditorScreen> {
       ),
     );
 
-    // Guardado y envío...
     final output = await getTemporaryDirectory();
     final fileName = title.replaceAll(RegExp(r'[^\w\s]+'), '_'); 
     final file = File(
