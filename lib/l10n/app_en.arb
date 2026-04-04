@@ -87,5 +87,9 @@
   "descripcion": "A simple note-taking app built with Flutter, designed to be fast, intuitive, and easy to use. It allows you to create, edit, and organize your notes efficiently.",
   "@descripcion": {},
   "mit_license": "MIT License",
-  "@mit_license": {}
+  "@mit_license": {},
+  "actualizador": "Updater",
+  "@actualizador": {},
+  "registro_de_cambio": "Changelog",
+  "registro_de_cambio": {}
 }

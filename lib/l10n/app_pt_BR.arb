@@ -42,5 +42,9 @@
   "html": "Arquivo HTML (.HTML)",
   "exportar_notas_como": "Exportar notas como:",
   "descripcion": "Um aplicativo de notas simples e fácil de usar, com suporte para texto enriquecido, imagens.",
-  "mit_license": "Licença MIT"
+  "mit_license": "Licença MIT",
+  "actualizador": "",
+  "@actualizador": {},
+  "registro_de_cambio": "",
+  "registro_de_cambio": {}
 }

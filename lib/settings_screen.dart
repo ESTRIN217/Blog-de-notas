@@ -111,7 +111,7 @@ class SettingsScreen extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                  // Dentro del ListView en SettingsScreen [cite: 3]
+                  
                   Card(
                     clipBehavior: Clip.hardEdge,
                     child: ListTile(
@@ -153,6 +153,36 @@ class SettingsScreen extends StatelessWidget {
                     child: ListTile(
                       leading: const Icon(Icons.info_outline_rounded),
                       title: Text(AppLocalizations.of(context)!.sobre),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AboutScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Card(
+                    clipBehavior: Clip.hardEdge,
+                    child: ListTile(
+                      leading: const Icon(Icons.info_outline_rounded),
+                      title: Text(AppLocalizations.of(context)!.actualizador),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const UpdaterScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Card(
+                    clipBehavior: Clip.hardEdge,
+                    child: ListTile(
+                      leading: const Icon(Icons.info_outline_rounded),
+                      title: Text(AppLocalizations.of(context)!.registro_de_cambio),
                       onTap: () {
                         Navigator.push(
                           context,

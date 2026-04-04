@@ -51,5 +51,9 @@
   "exportar_notas_como": "Exportar notas como:",
   "@exportar_notas_como": {},
   "descripcion": "Una aplicación de notas sencilla y fácil de usar, con soporte para texto enriquecido e imágenes.",
-  "mit_license": "Licencia MIT"
+  "mit_license": "Licencia MIT",
+  "actualizador": "Actualizador",
+  "@actualizador": {},
+  "registro_de_cambio": "Registro de cambios",
+  "registro_de_cambio": {}
 }

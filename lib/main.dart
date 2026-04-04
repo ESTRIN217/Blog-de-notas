@@ -19,18 +19,23 @@ import 'list_item.dart';
 import 'editor_screen.dart';
 import 'settings_screen.dart';
 import 'theme_provider.dart';
+import 'updater_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:bloc_de_notas/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 
 void main() {
-runApp(
-ChangeNotifierProvider(
-create: (context) => ThemeProvider(),
-child: const MyApp(),
-),
-);
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        
+        ChangeNotifierProvider(create: (context) => UpdaterProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
