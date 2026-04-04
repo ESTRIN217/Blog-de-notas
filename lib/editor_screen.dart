@@ -224,7 +224,7 @@ class _EditorScreenState extends State<EditorScreen> {
               ),
               pw.Divider(),
               
-              if (richTextWidget != null) richTextWidget,
+              ?richTextWidget,
               
               pw.SizedBox(height: 10),
             ],
