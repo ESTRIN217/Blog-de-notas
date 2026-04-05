@@ -112,6 +112,7 @@ class _EditorScreenState extends State<EditorScreen> {
       ),
       isScrollControlled: true,
       builder: (context) => SafeArea(
+        child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -156,6 +157,7 @@ class _EditorScreenState extends State<EditorScreen> {
             ),
             const SizedBox(height: 10),
           ],
+        ),
         ),
       ),
     );
