@@ -44,7 +44,6 @@
   "descripcion": "Una aplicación de notas simple y fácil de usar, con soporte para texto enriquecido, imágenes.",
   "mit_license": "Licencia MIT",
   "actualizador": "Actualizador",
-  "@actualizador": {},
   "registro_de_cambio": "Registro de cambios",
-  "registro_de_cambio": {}
+  "version_actual": "Version actual",
 }

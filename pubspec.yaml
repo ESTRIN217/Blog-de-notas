@@ -49,7 +49,7 @@ flutter:
 
 flutter_launcher_icons:
   android: "ic_launcher"
-  ios: false
+  ios: true
   image_path: "assets/icon/notas.png"
   # Opcional: para iconos adaptativos de Android
   adaptive_icon_background: "#FFFFFF" 
