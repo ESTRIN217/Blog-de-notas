@@ -174,7 +174,7 @@ class AboutScreen extends StatelessWidget {
   }
 
   /// Botón social circular estilizado
-  Widget _buildSocialButton(BuildContext context, IconData icon, VoidCallback onTap) {
+  Widget _buildSocialButton(BuildContext context, FaIconData icon, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),

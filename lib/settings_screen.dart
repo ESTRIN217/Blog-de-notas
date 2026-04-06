@@ -8,7 +8,7 @@ import 'updater_screen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -17,10 +17,8 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       // Forzamos el color de fondo para que las tarjetas resalten sutilmente
-      backgroundColor: Theme.of(context).colorScheme.surface, 
-      appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.settings),
-      ),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.settings)),
       body: DynamicColorBuilder(
         builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
           final isDynamicColorSupported =
@@ -33,14 +31,19 @@ class SettingsScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 24, top: 8),
                 children: [
                   if (isDynamicColorSupported) ...[
-                    _buildSectionTitle(context, AppLocalizations.of(context)!.apariencia),
-                    
+                    _buildSectionTitle(
+                      context,
+                      AppLocalizations.of(context)!.apariencia,
+                    ),
+
                     // Aquí agrupamos el Switch y los temas en un solo bloque
                     _buildSettingsGroup(
                       context,
                       children: [
                         SwitchListTile(
-                          title: Text(AppLocalizations.of(context)!.useDynamicColors),
+                          title: Text(
+                            AppLocalizations.of(context)!.useDynamicColors,
+                          ),
                           secondary: const Icon(Icons.palette),
                           value: themeProvider.useDynamicColors,
                           onChanged: (value) {
@@ -67,12 +70,16 @@ class SettingsScreen extends StatelessWidget {
                             segments: <ButtonSegment<ThemeMode>>[
                               ButtonSegment<ThemeMode>(
                                 value: ThemeMode.system,
-                                label: Text(AppLocalizations.of(context)!.system),
+                                label: Text(
+                                  AppLocalizations.of(context)!.system,
+                                ),
                                 icon: const Icon(Icons.brightness_auto),
                               ),
                               ButtonSegment<ThemeMode>(
                                 value: ThemeMode.light,
-                                label: Text(AppLocalizations.of(context)!.light),
+                                label: Text(
+                                  AppLocalizations.of(context)!.light,
+                                ),
                                 icon: const Icon(Icons.light_mode),
                               ),
                               ButtonSegment<ThemeMode>(
@@ -91,7 +98,10 @@ class SettingsScreen extends StatelessWidget {
                     ),
                   ],
 
-                  _buildSectionTitle(context, AppLocalizations.of(context)!.idioma),
+                  _buildSectionTitle(
+                    context,
+                    AppLocalizations.of(context)!.idioma,
+                  ),
                   _buildSettingsGroup(
                     context,
                     children: [
@@ -118,7 +128,10 @@ class SettingsScreen extends StatelessWidget {
                     ],
                   ),
 
-                  _buildSectionTitle(context, AppLocalizations.of(context)!.informacion),
+                  _buildSectionTitle(
+                    context,
+                    AppLocalizations.of(context)!.informacion,
+                  ),
                   // Agrupamos los 3 botones de información juntos
                   _buildSettingsGroup(
                     context,
@@ -136,12 +149,14 @@ class SettingsScreen extends StatelessWidget {
                         },
                       ),
                       ListTile(
-  leading: const FaIcon(FontAwesomeIcons.github),
-  title: Text(AppLocalizations.of(context)!.registro_de_cambio),
-  onTap: () {
-    _showChangelogBottomSheet(context);
-  },
-),
+                        leading: const FaIcon(FontAwesomeIcons.github),
+                        title: Text(
+                          AppLocalizations.of(context)!.registro_de_cambio,
+                        ),
+                        onTap: () {
+                          _showChangelogBottomSheet(context);
+                        },
+                      ),
                       ListTile(
                         leading: const Icon(Icons.info_outline_rounded),
                         title: Text(AppLocalizations.of(context)!.sobre),
@@ -169,32 +184,42 @@ class SettingsScreen extends StatelessWidget {
   /// Crea el título pequeño que va arriba de cada tarjeta
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 32.0, right: 32.0, bottom: 8.0, top: 16.0),
+      padding: const EdgeInsets.only(
+        left: 32.0,
+        right: 32.0,
+        bottom: 8.0,
+        top: 16.0,
+      ),
       child: Text(
         title,
         style: TextStyle(
           fontSize: 13, // Letra un poco más pequeña
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.primary, // Usa el color principal
+          color: Theme.of(
+            context,
+          ).colorScheme.primary, // Usa el color principal
         ),
       ),
     );
   }
 
   /// Crea el contenedor plano que agrupa a los ListTiles
-  Widget _buildSettingsGroup(BuildContext context, {required List<Widget> children}) {
+  Widget _buildSettingsGroup(
+    BuildContext context, {
+    required List<Widget> children,
+  }) {
     return Card(
       elevation: 0, // Cero sombras
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       // Un color de fondo muy sutil basado en tu tema dinámico
-      color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.4),
+      color: Theme.of(
+        context,
+      ).colorScheme.surfaceContainerHighest.withOpacity(0.4),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24), // Bordes bien redondeados
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -255,17 +280,18 @@ class SettingsScreen extends StatelessWidget {
       },
     );
   }
+
   // Función para mostrar el BottomSheet
-void _showChangelogBottomSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true, // Permite que ocupe más altura si es necesario
-    useSafeArea: true,
-    builder: (BuildContext context) {
-      return const ChangelogSheet();
-    },
-  );
-}
+  void _showChangelogBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Permite que ocupe más altura si es necesario
+      useSafeArea: true,
+      builder: (BuildContext context) {
+        return const ChangelogSheet();
+      },
+    );
+  }
 }
 
 class ChangelogSheet extends StatelessWidget {
@@ -274,8 +300,10 @@ class ChangelogSheet extends StatelessWidget {
   /// Obtiene la lista de releases desde la API de GitHub
   Future<List<dynamic>> _fetchReleases() async {
     // Endpoint oficial de la API de GitHub para releases
-    final url = Uri.parse('https://api.github.com/repos/ESTRIN217/Bloc-de-notas/releases');
-    
+    final url = Uri.parse(
+      'https://api.github.com/repos/ESTRIN217/Bloc-de-notas/releases',
+    );
+
     try {
       final response = await http.get(url);
 
@@ -309,7 +337,7 @@ class ChangelogSheet extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.close),
-            onTap: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(context),
           ),
         ],
       ),
@@ -321,7 +349,9 @@ class ChangelogSheet extends StatelessWidget {
           } else if (snapshot.hasError) {
             return Center(child: Text('Ocurrió un error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('No hay registros de cambios disponibles.'));
+            return const Center(
+              child: Text('No hay registros de cambios disponibles.'),
+            );
           }
 
           final releases = snapshot.data!;
@@ -334,7 +364,10 @@ class ChangelogSheet extends StatelessWidget {
               final String version = release['tag_name'] ?? 'v?';
               final String title = release['name'] ?? 'Sin título';
               final String body = release['body'] ?? '';
-              final String date = release['published_at'].toString().substring(0, 10);
+              final String date = release['published_at'].toString().substring(
+                0,
+                10,
+              );
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -366,10 +399,7 @@ class ChangelogSheet extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     // Cuerpo del release
-                    Text(
-                      body,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
+                    Text(body, style: Theme.of(context).textTheme.bodyMedium),
                     const Divider(height: 32),
                   ],
                 ),
