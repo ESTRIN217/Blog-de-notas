@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:markdown_quill/markdown_quill.dart';
 import 'package:flutter_quill_to_pdf/flutter_quill_to_pdf.dart';
 import 'package:vsc_quill_delta_to_html/vsc_quill_delta_to_html.dart'
@@ -910,15 +912,15 @@ void _deleteSelectedItems() async {
     final previewController = quill.QuillController(
       document: item.document,
       selection: const TextSelection.collapsed(offset: 0),
+      readOnly: true,
     );
 
     // 2. Configuramos el editor en modo lectura
     final richTextPreview = IgnorePointer(
       // IgnorePointer asegura que el toque pase al InkWell de la tarjeta
       child: quill.QuillEditor.basic(
+        controller: previewController,
         config: quill.QuillEditorConfig(
-          controller: previewController,
-          readOnly: true, // ¡Muy importante!
           showCursor: false,
           padding: EdgeInsets.zero,
           scrollable: false, // Evita que interfiera con el scroll de la lista
@@ -929,6 +931,7 @@ void _deleteSelectedItems() async {
                 color: textColor.withAlpha((255 * 0.8).round()),
                 fontSize: 14,
               ),
+              const quill.HorizontalSpacing(0, 0),
               const quill.VerticalSpacing(0, 0),
               const quill.VerticalSpacing(0, 0),
               null,

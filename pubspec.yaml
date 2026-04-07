@@ -36,7 +36,6 @@ dependencies:
   http: ^1.2.0
   flutter_markdown_plus: ^1.0.7
   quill_native_bridge: ^11.1.0
-  image_picker: ^1.2.1
   video_player: ^2.11.1
 
 dev_dependencies:

@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -43,7 +44,10 @@ class SettingsScreen extends StatelessWidget {
                             AppLocalizations.of(context)!.useDynamicColors,
                           ),
                           // Aplicamos el fondo al icono de la paleta
-                          secondary: _buildIconContainer(context, Icons.palette),
+                          secondary: _buildIconContainer(
+                            context,
+                            Icons.palette,
+                          ),
                           value: themeProvider.useDynamicColors,
                           onChanged: (value) {
                             themeProvider.setUseDynamicColors(value);
@@ -59,7 +63,10 @@ class SettingsScreen extends StatelessWidget {
                         ),
                         ListTile(
                           // Aplicamos el fondo al icono del modo oscuro
-                          leading: _buildIconContainer(context, Icons.dark_mode),
+                          leading: _buildIconContainer(
+                            context,
+                            Icons.dark_mode,
+                          ),
                           title: Text(AppLocalizations.of(context)!.themeMode),
                         ),
                         Padding(
@@ -134,26 +141,29 @@ class SettingsScreen extends StatelessWidget {
                   _buildSettingsGroup(
                     context,
                     children: [
-[
-  // Solo se mostrará si NO es Web
-  if (!kIsWeb) 
-    ListTile(
-      leading: _buildIconContainer(context, Icons.update),
-      title: Text(AppLocalizations.of(context)!.actualizador),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const UpdaterScreen(),
-          ),
-        );
-      },
-    ),
-    
-]
+                      // Solo se mostrará si NO es Web
+                      if (!kIsWeb)
+                        ListTile(
+                          leading: _buildIconContainer(context, Icons.update),
+                          title: Text(
+                            AppLocalizations.of(context)!.actualizador,
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const UpdaterScreen(),
+                              ),
+                            );
+                          },
+                        ),
+
                       ListTile(
                         // Aplicamos el fondo al icono de GitHub (FontAwesome también funciona con IconData)
-                        leading: _buildFaIconContainer(context, FontAwesomeIcons.github),
+                        leading: _buildFaIconContainer(
+                          context,
+                          FontAwesomeIcons.github,
+                        ),
                         title: Text(
                           AppLocalizations.of(context)!.registro_de_cambio,
                         ),
@@ -163,7 +173,10 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       ListTile(
                         // Aplicamos el fondo al icono de información
-                        leading: _buildIconContainer(context, Icons.info_outline_rounded),
+                        leading: _buildIconContainer(
+                          context,
+                          Icons.info_outline_rounded,
+                        ),
                         title: Text(AppLocalizations.of(context)!.sobre),
                         onTap: () {
                           Navigator.push(
@@ -186,7 +199,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   // --- FUNCIONES DE AYUDA ---
-  
+
   Widget _buildSectionTitle(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.only(
@@ -198,9 +211,9 @@ class SettingsScreen extends StatelessWidget {
       child: Text(
         title,
         style: TextStyle(
-          fontSize: 13, 
+          fontSize: 13,
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.primary, 
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );
@@ -211,24 +224,24 @@ class SettingsScreen extends StatelessWidget {
     required List<Widget> children,
   }) {
     return Card(
-      elevation: 0, 
+      elevation: 0,
       margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
       color: Theme.of(
         context,
       ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24), 
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
       child: Column(children: children),
     );
   }
-  
+
   Widget _buildIconContainer(BuildContext context, IconData icon) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Icon(icon, color: Theme.of(context).colorScheme.onSurfaceVariant),
@@ -239,10 +252,15 @@ class SettingsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(14),
       ),
-      child: FaIcon(icon, color: Theme.of(context).colorScheme.onSurfaceVariant),
+      child: FaIcon(
+        icon,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
     );
   }
 
@@ -385,7 +403,10 @@ class ChangelogSheet extends StatelessWidget {
               final String version = release['tag_name'] ?? 'v?';
               final String title = release['name'] ?? 'Sin título';
               final String body = release['body'] ?? '';
-              final String date = release['published_at'].toString().substring(0, 10);
+              final String date = release['published_at'].toString().substring(
+                0,
+                10,
+              );
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -416,27 +437,34 @@ class ChangelogSheet extends StatelessWidget {
                       style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 12),
-                    
+
                     // --- Renderizador de Markdown ---
                     MarkdownBody(
                       data: body,
-                      selectable: true, // Permite al usuario seleccionar y copiar texto
-                      styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)).copyWith(
-                        // Ajusta el espacio entre párrafos si es necesario
-                        pPadding: const EdgeInsets.only(bottom: 8), 
-                      ),
+                      selectable:
+                          true, // Permite al usuario seleccionar y copiar texto
+                      styleSheet:
+                          MarkdownStyleSheet.fromTheme(
+                            Theme.of(context),
+                          ).copyWith(
+                            // Ajusta el espacio entre párrafos si es necesario
+                            pPadding: const EdgeInsets.only(bottom: 8),
+                          ),
                       // Hace que los enlaces en el markdown funcionen
                       onTapLink: (text, href, title) async {
                         if (href != null) {
                           final uri = Uri.parse(href);
                           if (await canLaunchUrl(uri)) {
-                            await launchUrl(uri, mode: LaunchMode.externalApplication);
+                            await launchUrl(
+                              uri,
+                              mode: LaunchMode.externalApplication,
+                            );
                           }
                         }
                       },
                     ),
+
                     // ---------------------------------
-                    
                     const Divider(height: 32),
                   ],
                 ),
