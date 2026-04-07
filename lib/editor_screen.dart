@@ -624,7 +624,7 @@ quill.QuillEditor.basic(
       ),
     );
   }
-  }
+  
   Future<void> _cleanupImages() async {
     final delta = _contentController.document.toDelta().toJson();
     
@@ -644,5 +644,4 @@ quill.QuillEditor.basic(
       }
     }
   }
-}
 }
