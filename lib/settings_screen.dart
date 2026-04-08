@@ -114,18 +114,23 @@ class SettingsScreen extends StatelessWidget {
                         // Aplicamos el fondo al icono de idioma
                         leading: _buildIconContainer(context, Icons.language),
                         title: Text(
-                          themeProvider.locale.languageCode == 'es'
-                              ? AppLocalizations.of(context)!.espanol
-                              : themeProvider.locale.countryCode == "VE"
-                              ? AppLocalizations.of(context)!.venezolano
-                              : themeProvider.locale.languageCode == 'en'
-                              ? AppLocalizations.of(context)!.ingles
-                              : themeProvider.locale.languageCode == 'pt'
-                              ? AppLocalizations.of(context)!.portugues
-                              : themeProvider.locale.countryCode == 'BR'
-                              ? AppLocalizations.of(context)!.brasileno
-                              : '🌐 ${themeProvider.locale.languageCode.toUpperCase()}',
-                        ),
+  // 1. Si el locale es nulo, es porque está en modo sistema
+  themeProvider.locale == null 
+    ? AppLocalizations.of(context)!.system_default
+    // 2. Si no es nulo, buscamos la variante específica (País)
+    : themeProvider.locale.countryCode == "VE"
+        ? AppLocalizations.of(context)!.venezolano
+        : themeProvider.locale.countryCode == "BR"
+            ? AppLocalizations.of(context)!.brasileno
+            // 3. Por último, los idiomas genéricos
+            : themeProvider.locale.languageCode == 'es'
+                ? AppLocalizations.of(context)!.espanol
+                : themeProvider.locale.languageCode == 'pt'
+                    ? AppLocalizations.of(context)!.portugues
+                    : themeProvider.locale.languageCode == 'en'
+                        ? AppLocalizations.of(context)!.ingles
+                        : '🌐 ${themeProvider.locale.languageCode.toUpperCase()}',
+),
                         subtitle: Text(AppLocalizations.of(context)!.idioma),
                         onTap: () {
                           _showLanguageDialog(context, themeProvider);
@@ -265,62 +270,87 @@ class SettingsScreen extends StatelessWidget {
   }
 
   void _showLanguageDialog(BuildContext context, ThemeProvider themeProvider) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) {
-        return SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Text('🇻🇪'),
-                  title: const Text('Español (Venezuela)'),
-                  onTap: () {
-                    themeProvider.setLocale(const Locale('es', 'VE'));
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: const Text('🇪🇸'),
-                  title: const Text('Español'),
-                  onTap: () {
-                    themeProvider.setLocale(const Locale('es'));
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: const Text('🇺🇸'),
-                  title: const Text('English'),
-                  onTap: () {
-                    themeProvider.setLocale(const Locale('en'));
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: const Text('🇧🇷'),
-                  title: const Text('Português (Brasil)'),
-                  onTap: () {
-                    themeProvider.setLocale(const Locale('pt', 'BR'));
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  leading: const Text('🇵🇹'),
-                  title: const Text('Português (Portugal)'),
-                  onTap: () {
-                    themeProvider.setLocale(const Locale('pt'));
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      return SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // OPCIÓN PREDETERMINADO
+              ListTile(
+                leading: const Text('🌐'),
+                title: Text(AppLocalizations.of(context)!.system_default), // Usa la clave del ARB
+                onTap: () {
+                  // Enviamos null para que MaterialApp use el idioma del sistema
+                  themeProvider.setLocale(null); 
+                  Navigator.pop(context);
+                },
+              ),
+              const Divider(), // Una línea divisoria queda bien aquí
+              
+              // VENEZUELA
+              ListTile(
+                leading: const Text('🇻🇪'),
+                title: const Text('Español (Venezuela)'),
+                onTap: () {
+                  // IMPORTANTE: Pasar ambos códigos para que el ternario lo detecte
+                  themeProvider.setLocale(const Locale('es', 'VE'));
+                  Navigator.pop(context);
+                },
+              ),
+              
+              // ESPAÑA
+              ListTile(
+                leading: const Text('🇪🇸'),
+                title: const Text('Español (España)'),
+                onTap: () {
+                  themeProvider.setLocale(const Locale('es', 'ES'));
+                  Navigator.pop(context);
+                },
+              ),
+              
+              // USA
+              ListTile(
+                leading: const Text('🇺🇸'),
+                title: const Text('English'),
+                onTap: () {
+                  themeProvider.setLocale(const Locale('en'));
+                  Navigator.pop(context);
+                },
+              ),
+              
+              // BRASIL
+              ListTile(
+                leading: const Text('🇧🇷'),
+                title: const Text('Português (Brasil)'),
+                onTap: () {
+                  themeProvider.setLocale(const Locale('pt', 'BR'));
+                  Navigator.pop(context);
+                },
+              ),
+              
+              // PORTUGAL
+              ListTile(
+                leading: const Text('🇵🇹'),
+                title: const Text('Português (Portugal)'),
+                onTap: () {
+                  themeProvider.setLocale(const Locale('pt', 'PT'));
+                  Navigator.pop(context);
+                },
+              ),
+            ],
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 
   // Función para mostrar el BottomSheet
   void _showChangelogBottomSheet(BuildContext context) {

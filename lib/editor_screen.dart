@@ -27,6 +27,14 @@ class EditorScreen extends StatefulWidget {
 }
 
 class _EditorScreenState extends State<EditorScreen> {
+  final AudioRecorder _audioRecorder = AudioRecorder();
+  bool _isRecording = false;
+
+  @override
+  void dispose() {
+    _audioRecorder.dispose(); // ¡Importante liberar el recurso!
+    super.dispose();
+  }
   late TextEditingController _titleController;
   late quill.QuillController _contentController;
   late FlutterTts _flutterTts;
@@ -590,7 +598,9 @@ quill.QuillEditor.basic(
     placeholder: 'Escribe algo increíble...',
     expands: false,
     padding: EdgeInsets.zero,
-    embedBuilders: FlutterQuillEmbeds.editorBuilders(),
+    embedBuilders: [ FlutterQuillEmbeds.editorBuilders(),
+    AudioEmbedBuilder(),
+    ],
   ),
 ),
                 ),
@@ -608,7 +618,7 @@ quill.QuillEditor.basic(
                 onPressed: _showBackgroundSheet,
               ),
               IconButton(
-                icon: Icon(Icons.text_fields, color: textColor),
+                icon: Icon(Icons.tune, color: textColor),
                 onPressed: _showTextTools,
               ),
               IconButton(
@@ -643,5 +653,155 @@ quill.QuillEditor.basic(
         }
       }
     }
+  }
+  // --- MÉTODO 1: SELECCIONAR AUDIO EXISTENTE ---
+  Future<void> _pickAudioFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.audio,
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final originalPath = result.files.single.path!;
+        
+        // (Opcional pero recomendado) Copiar el archivo a la carpeta de tu app
+        // para que si el usuario lo borra de "Descargas", la nota no se rompa.
+        final dir = await getApplicationDocumentsDirectory();
+        final fileName = result.files.single.name;
+        final savedFile = await File(originalPath).copy('${dir.path}/$fileName');
+
+        _insertarAudioAlEditor(savedFile.path);
+      }
+    } catch (e) {
+      debugPrint('Error al seleccionar audio: $e');
+    }
+  }
+
+  // --- MÉTODO 2: GRABAR NOTA DE VOZ ---
+  Future<void> _toggleRecording() async {
+    try {
+      if (_isRecording) {
+        // DETENER GRABACIÓN
+        final path = await _audioRecorder.stop();
+        setState(() => _isRecording = false);
+        
+        if (path != null) {
+          _insertarAudioAlEditor(path);
+        }
+      } else {
+        // INICIAR GRABACIÓN
+        // 1. Pedir permisos
+        if (await Permission.microphone.request().isGranted) {
+          // 2. Preparar la ruta donde se guardará (en los documentos de la app)
+          final dir = await getApplicationDocumentsDirectory();
+          final path = '${dir.path}/nota_voz_${DateTime.now().millisecondsSinceEpoch}.m4a';
+          
+          // 3. Iniciar
+          await _audioRecorder.start(
+            const RecordConfig(encoder: AudioEncoder.aacLc), // Formato ligero y compatible
+            path: path,
+          );
+          
+          setState(() => _isRecording = true);
+        } else {
+          // El usuario denegó el permiso
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Se requiere permiso de micrófono para grabar')),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Error en la grabación: $e');
+      setState(() => _isRecording = false);
+    }
+  }
+
+  // (El método que ya teníamos del paso anterior)
+  void _insertarAudioAlEditor(String filePath) {
+    final index = _contentController.selection.baseOffset;
+    _contentController.document.insert(
+      index,
+      quill.BlockEmbed.custom(quill.CustomBlockEmbed('audio', filePath)),
+    );
+    _contentController.updateSelection(
+      TextSelection.collapsed(offset: index + 1),
+      quill.ChangeSource.local,
+    );
+  }
+  void _insertarAudioAlEditor(String filePath) {
+  // Obtenemos la posición actual del cursor
+  final index = _contentController.selection.baseOffset;
+  
+  // Insertamos el Embed personalizado
+  _contentController.document.insert(
+    index,
+    BlockEmbed.custom(CustomBlockEmbed('audio', filePath)),
+  );
+  
+  // Movemos el cursor un espacio adelante para seguir escribiendo
+  _contentController.updateSelection(
+    TextSelection.collapsed(offset: index + 1),
+    ChangeSource.local,
+  );
+}
+void _showAudioMenu() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        // Usamos un StatefulBuilder para poder actualizar el UI del BottomSheet
+        // (por ejemplo, cambiar el texto a "Grabando..." en tiempo real)
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: Icon(
+                        _isRecording ? Icons.stop_circle : Icons.mic,
+                        color: _isRecording ? Colors.red : Theme.of(context).colorScheme.primary,
+                        size: 32,
+                      ),
+                      title: Text(
+                        _isRecording ? 'Detener grabación' : 'Grabar nota de voz',
+                        style: TextStyle(
+                          color: _isRecording ? Colors.red : null,
+                          fontWeight: _isRecording ? FontWeight.bold : null,
+                        ),
+                      ),
+                      onTap: () async {
+                        // Llamamos al método y actualizamos el modal y la pantalla base
+                        await _toggleRecording();
+                        setModalState(() {}); 
+                        if (!_isRecording && mounted) {
+                          Navigator.pop(context); // Cierra el menú al terminar de grabar
+                        }
+                      },
+                    ),
+                    if (!_isRecording) ...[
+                      const Divider(),
+                      ListTile(
+                        leading: const Icon(Icons.audio_file),
+                        title: const Text('Seleccionar archivo de audio'),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _pickAudioFile();
+                        },
+                      ),
+                    ]
+                  ],
+                ),
+              ),
+            );
+          }
+        );
+      },
+    );
   }
 }
