@@ -165,17 +165,34 @@ class _MyHomePageState extends State<MyHomePage> {
           _isLoading = false;
         });
       } else {
-        _createWelcomeNote();
-        _createExerciteNote();
+        // CORRECCIÓN: Asignamos ambas notas a la lista al mismo tiempo
+        setState(() {
+          _items = [
+            _createWelcomeNote(),
+            _createExerciteNote(),
+          ];
+          _filteredItems = _items;
+          _isLoading = false;
+        });
+        _saveItems(); // Guardamos una sola vez con ambas notas ya en la lista
       }
     } catch (e) {
       debugPrint("Error loading items: $e");
-      _createWelcomeNote();
-      _createExerciteNote();
+      
+      // Manejo de error: también cargamos ambas notas
+      setState(() {
+        _items = [
+          _createWelcomeNote(),
+          _createExerciteNote(),
+        ];
+        _filteredItems = _items;
+        _isLoading = false;
+      });
+      _saveItems();
     }
   }
 
-  void _createWelcomeNote() {
+  ListItem _createWelcomeNote() {
     final welcomeNote = ListItem(
       id: 'welcome_note',
       title: '¡Bienvenido a Bloc de notas!', // Este es el título en la lista
@@ -272,16 +289,9 @@ class _MyHomePageState extends State<MyHomePage> {
       // El color amber[200] le da un toque de "post-it" clásico muy bueno
       backgroundColor: Colors.amber[200]!.toARGB32(),
     );
-
-    setState(() {
-      _items = [welcomeNote];
-      _filteredItems = _items;
-      _isLoading = false;
-      _saveItems();
-    });
   }
 
-  void _createExerciteNote() {
+  ListItem _createExerciteNote() {
     final exerciteNote = ListItem(
       id: 'exercite_note',
       title: '¡Rutina de ejercicios!', // Este es el título en la lista
@@ -558,13 +568,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ]),
       lastModified: DateTime.now(),
     );
-
-    setState(() {
-      _items = [exerciteNote];
-      _filteredItems = _items;
-      _isLoading = false;
-      _saveItems();
-    });
   }
 
   Future<void> _saveItems() async {
@@ -1225,7 +1228,10 @@ class _MyHomePageState extends State<MyHomePage> {
               null,
             ),
           ),
-          embedBuilders: kIsWeb ? [] : FlutterQuillEmbeds.editorBuilders(),
+          embedBuilders: kIsWeb ? [
+                        ...FlutterQuillEmbeds.editorBuilders(),
+                        AudioEmbedBuilder(),
+                      ],
         ),
       ),
     );
@@ -1399,11 +1405,13 @@ class _MyHomePageState extends State<MyHomePage> {
               final String path = insert['image'];
               final file = File(path);
 
-              // 3. Verificamos que sea de nuestra carpeta interna antes de borrar
+              // 3. Verificamos que sea de nuestra carpeta de caché antes de borrar
+              // Ajustado para coincidir con la ruta temporal del image_picker
               if (await file.exists() &&
-                  path.contains('/app_flutter/images/')) {
+                  path.contains('com.estrin217.bloc_de_notas/cache')
+                  path.contains('com.estrin217.bloc_de_notas/app_flutter')) {
                 await file.delete();
-                if (kDebugMode) print('Imagen eliminada desde main: $path');
+                if (kDebugMode) print('Imagen de caché eliminada desde main: $path');
               }
             }
           }

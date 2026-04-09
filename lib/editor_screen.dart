@@ -598,7 +598,7 @@ class _EditorScreenState extends State<EditorScreen> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: // Busca tu QuillEditor.basic y actualízalo así:
+                  child:
                   quill.QuillEditor.basic(
                     controller: _contentController,
                     config: quill.QuillEditorConfig(
@@ -661,16 +661,17 @@ class _EditorScreenState extends State<EditorScreen> {
     final delta = _contentController.document.toDelta().toJson();
 
     for (final op in delta) {
-      if (op.containsKey('insert') && op['insert'] is Map) {
+      if (op is Map && op.containsKey('insert') && op['insert'] is Map) {
         final insert = op['insert'] as Map;
         if (insert.containsKey('image')) {
           final String path = insert['image'];
           final file = File(path);
 
-          // Ajustado: ya no verificamos la subcarpeta específica
-          if (await file.exists()) {
+          // Verificamos que el archivo exista Y que esté dentro de tu carpeta de caché
+          if (await file.exists() && 
+              path.contains('com.estrin217.bloc_de_notas/cache')) {
             await file.delete();
-            if (kDebugMode) print('Imagen eliminada de la caché: $path');
+            if (kDebugMode) print('Imagen eliminada de la caché (Editor): $path');
           }
         }
       }

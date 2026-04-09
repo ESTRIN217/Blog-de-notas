@@ -279,8 +279,7 @@ class SettingsScreen extends StatelessWidget {
                     AppLocalizations.of(context)!.system_default,
                   ), // Usa la clave del ARB
                   onTap: () {
-                    // Enviamos null para que MaterialApp use el idioma del sistema
-                    themeProvider.setLocale(null);
+                    themeProvider.setLocale(WidgetsBinding.instance.platformDispatcher.locale);
                     Navigator.pop(context);
                   },
                 ),
