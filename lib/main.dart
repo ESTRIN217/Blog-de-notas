@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bloc_de_notas/audioembedbuilder.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -289,6 +290,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // El color amber[200] le da un toque de "post-it" clásico muy bueno
       backgroundColor: Colors.amber[200]!.toARGB32(),
     );
+    return welcomeNote;
   }
 
   ListItem _createExerciteNote() {
@@ -568,6 +570,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ]),
       lastModified: DateTime.now(),
     );
+    return exerciteNote;
   }
 
   Future<void> _saveItems() async {
@@ -1228,7 +1231,7 @@ class _MyHomePageState extends State<MyHomePage> {
               null,
             ),
           ),
-          embedBuilders: kIsWeb ? [
+          embedBuilders: [
                         ...FlutterQuillEmbeds.editorBuilders(),
                         AudioEmbedBuilder(),
                       ],
@@ -1408,7 +1411,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // 3. Verificamos que sea de nuestra carpeta de caché antes de borrar
               // Ajustado para coincidir con la ruta temporal del image_picker
               if (await file.exists() &&
-                  path.contains('com.estrin217.bloc_de_notas/cache')
+                  path.contains('com.estrin217.bloc_de_notas/cache') ||
                   path.contains('com.estrin217.bloc_de_notas/app_flutter')) {
                 await file.delete();
                 if (kDebugMode) print('Imagen de caché eliminada desde main: $path');

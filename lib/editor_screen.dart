@@ -661,7 +661,7 @@ class _EditorScreenState extends State<EditorScreen> {
     final delta = _contentController.document.toDelta().toJson();
 
     for (final op in delta) {
-      if (op is Map && op.containsKey('insert') && op['insert'] is Map) {
+      if (op.containsKey('insert') && op['insert'] is Map) {
         final insert = op['insert'] as Map;
         if (insert.containsKey('image')) {
           final String path = insert['image'];
