@@ -1101,20 +1101,29 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () => Scaffold.of(context).openDrawer(),
         ),
       ),
-      title: TextField(
-        controller: _searchController,
-        decoration: InputDecoration(
-          hintText: AppLocalizations.of(context)!.search,
-          prefixIcon: const Icon(Icons.search),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.0),
-            borderSide: BorderSide.none,
+      title: Container(
+        height: 48, // Altura estándar de la barra de búsqueda en Google
+        decoration: BoxDecoration(
+          // surfaceContainerHigh es el color oficial de Google para cajas de búsqueda
+          color: Theme.of(context).colorScheme.surfaceContainerHigh, 
+          borderRadius: BorderRadius.circular(24.0),
+        ),
+        child: TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context)!.search,
+            prefixIcon: Icon(
+              Icons.search,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            border: InputBorder.none, // Quitamos el borde para usar el del Container
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 12, // Centra el texto verticalmente
+              horizontal: 20,
+            ),
           ),
-          filled: true,
-          fillColor: Theme.of(context).colorScheme.onSurface,
-          contentPadding: const EdgeInsets.symmetric(
-            vertical: 0,
-            horizontal: 20,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ),
@@ -1142,11 +1151,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar:
-          true, // El contenido empieza desde arriba de la pantalla
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(),
       drawer: Drawer(
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow, // Color MD3
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -1317,13 +1325,20 @@ class _MyHomePageState extends State<MyHomePage> {
     return Card.outlined(
       clipBehavior: Clip.antiAlias,
       color: isSelected
-          ? Theme.of(
-              context,
-            ).colorScheme.primaryContainer.withValues(alpha: 0.6)
+          ? Theme.of(context).colorScheme.primaryContainer
           : (item.backgroundColor != null
                 ? Color(item.backgroundColor!)
-                : null),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                : Theme.of(context).colorScheme.surfaceContainerLow), // Fondo sutil MD3 para tarjetas
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          // Usamos outlineVariant para un borde suave y elegante
+          color: isSelected 
+              ? Theme.of(context).colorScheme.primary 
+              : Theme.of(context).colorScheme.outlineVariant,
+          width: 1,
+        ),
+      ),
       child: InkWell(
         onTap: () =>
             _isSelectionMode ? _toggleSelection(item) : _navigateToEditor(item),
