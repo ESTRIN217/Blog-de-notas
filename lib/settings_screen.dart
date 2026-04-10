@@ -437,14 +437,7 @@ class ChangelogSheet extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          version,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 18,
-                          ),
-                        ),
+                        _buildBadge(context, version),
                         Text(
                           date,
                           style: Theme.of(context).textTheme.bodySmall,
@@ -499,6 +492,24 @@ class ChangelogSheet extends StatelessWidget {
         label: const Text('Ver en GitHub'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+    /// Etiquetas pequeñas para la versión
+  Widget _buildBadge(BuildContext context, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.onSecondaryContainer,
+        ),
+      ),
     );
   }
 }

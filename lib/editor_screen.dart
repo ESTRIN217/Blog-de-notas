@@ -628,21 +628,21 @@ class _EditorScreenState extends State<EditorScreen> {
             color: Colors.transparent,
             child: Row(
               children: [
-                IconButton(
+                IconButton.outlined(
                   icon: Icon(
                     Icons.palette_outlined,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   onPressed: _showBackgroundSheet,
                 ),
-                IconButton(
+                IconButton.outlined(
                   icon: Icon(
                     Icons.tune,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   onPressed: _showTextTools,
                 ),
-                IconButton(
+                IconButton.outlined(
                   icon: Icon(
                     _ttsState == TtsState.playing
                         ? Icons.stop
@@ -651,14 +651,14 @@ class _EditorScreenState extends State<EditorScreen> {
                   ),
                   onPressed: _toggleSpeak,
                 ),
-                IconButton.filled(
+                IconButton.outlined(
                   icon: Icon(
                     Icons.fiber_manual_record,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   onPressed: _showAudioMenu,
                 ),
-                IconButton.filled(
+                IconButton.outlined(
                   icon: Icon(
                     Icons.gesture,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,

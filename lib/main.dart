@@ -27,6 +27,7 @@ import 'updater_provider.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:bloc_de_notas/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'drawing_embed.dart';
 
 void main() {
   runApp(
@@ -145,6 +146,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _loadItems() async {
     try {
+      // 1. Cargamos la preferencia de la vista (Lista o Cuadrícula)
+      final prefs = await SharedPreferences.getInstance();
+      final savedView = prefs.getBool('is_list_view');
+      if (savedView != null) {
+        setState(() {
+          _isListView = savedView;
+        });
+      }
+      
+      // 2. Cargamos las notas
       String? contents;
       if (kIsWeb) {
         final prefs = await SharedPreferences.getInstance();
@@ -622,10 +633,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _toggleView() {
+  void _toggleView() async {
     setState(() {
       _isListView = !_isListView;
     });
+    
+    // Guardamos la preferencia
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_list_view', _isListView);
   }
 
   Future<void> _navigateToEditor([ListItem? item]) async {
@@ -1234,6 +1249,7 @@ class _MyHomePageState extends State<MyHomePage> {
           embedBuilders: [
             ...FlutterQuillEmbeds.editorBuilders(),
             AudioEmbedBuilder(),
+            DrawingEmbedBuilder(),
           ],
         ),
       ),
