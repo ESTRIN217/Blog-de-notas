@@ -225,11 +225,18 @@ class AboutScreen extends StatelessWidget {
 
   /// Grupo de enlaces (Repositorio, Licencia)
   Widget _buildLinkGroup(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(24),
-      ),
+    return Card.outlined(
+  elevation: 0,
+  margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+  color: Theme.of(context).colorScheme.surface,
+  clipBehavior: Clip.antiAlias,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(24),
+    side: BorderSide(
+      color: Theme.of(context).colorScheme.outlineVariant,
+      width: 1.0,
+    ),
+  ),
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [

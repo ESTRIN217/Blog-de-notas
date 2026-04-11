@@ -107,11 +107,18 @@ class UpdaterScreen extends StatelessWidget {
   }
 
   Widget _buildGroup(BuildContext context, {required Widget child}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(28),
-      ),
+    return Card.outlined(
+  elevation: 0,
+  margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+  color: Theme.of(context).colorScheme.surface,
+  clipBehavior: Clip.antiAlias,
+  shape: RoundedRectangleBorder(
+    borderRadius: BorderRadius.circular(24),
+    side: BorderSide(
+      color: Theme.of(context).colorScheme.outlineVariant,
+      width: 1.0,
+    ),
+  ),
       clipBehavior: Clip.antiAlias,
       child: child,
     );

@@ -1367,7 +1367,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: contentColumn,
                 ),
               ),
-              if (canReorder && !_isSelectionMode && isListView)
+              if (canReorder && !_isSelectionMode)
                 ReorderableDragStartListener(
                   index: _filteredItems.indexOf(item),
                   child: Padding(
