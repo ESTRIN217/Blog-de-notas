@@ -1263,29 +1263,27 @@ class _MyHomePageState extends State<MyHomePage> {
     // 2. Configuramos el editor en modo lectura
     final richTextPreview = IgnorePointer(
       // IgnorePointer asegura que el toque pase al InkWell de la tarjeta
-      child: quill.QuillEditor.basic(
-        controller: previewController,
-        config: quill.QuillEditorConfig(
-          showCursor: false,
+      child: Theme(
+  data: Theme.of(context).copyWith(
+    textTheme: Theme.of(context).textTheme.apply(
+      bodyColor: dynamicTextColor,      // Color para el texto normal
+      displayColor: dynamicTextColor,   // Color para los encabezados (H1, H2, etc.)
+    ),
+  ),
+  child: quill.QuillEditor.basic(
+    controller: previewController,
+    config: quill.QuillEditorConfig(
+      showCursor: false,
           padding: EdgeInsets.zero,
-          scrollable: false, // Evita que interfiera con el scroll de la lista
-          // Ajustamos el color base para que coincida con el fondo de tu tarjeta
-          customStyles: quill.DefaultStyles(
-            paragraph: quill.DefaultTextBlockStyle(
-              TextStyle(color: dynamicTextColor, fontSize: 14),
-              const quill.HorizontalSpacing(0, 0),
-              const quill.VerticalSpacing(0, 0),
-              const quill.VerticalSpacing(0, 0),
-              null,
-            ),
-          ),
-          embedBuilders: [
-            ...FlutterQuillEmbeds.editorBuilders(),
-            AudioEmbedBuilder(),
-            DrawingEmbedBuilder(),
-          ],
-        ),
-      ),
+          scrollable: false,
+      embedBuilders: [
+        ...FlutterQuillEmbeds.editorBuilders(),
+        AudioEmbedBuilder(),
+        DrawingEmbedBuilder(),
+      ],
+    ),
+  ),
+),
     );
 
     final contentColumn = Column(
@@ -1367,7 +1365,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: contentColumn,
                 ),
               ),
-              if (canReorder && !_isSelectionMode)
+              if (canReorder && !_isSelectionMode && ListView)
                 ReorderableDragStartListener(
                   index: _filteredItems.indexOf(item),
                   child: Padding(

@@ -613,30 +613,29 @@ class _EditorScreenState extends State<EditorScreen> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: quill.QuillEditor.basic(
-                    controller: _contentController,
-                    config: quill.QuillEditorConfig(
-                      autoFocus: false,
-                      placeholder: 'Escribe algo increíble...',
-                      expands: false,
-                      padding: EdgeInsets.zero,
-                      customStyles: quill.DefaultStyles(
-                        paragraph: quill.DefaultTextBlockStyle(
-                          TextStyle(color: dynamicTextColor),
-                          const quill.HorizontalSpacing(0, 0),
-                          const quill.VerticalSpacing(0, 0),
-                          const quill.VerticalSpacing(0, 0),
-                          null,
-                        ),
-                      ),
-
-                      embedBuilders: [
-                        ...FlutterQuillEmbeds.editorBuilders(),
-                        AudioEmbedBuilder(),
-                        DrawingEmbedBuilder(),
-                      ],
-                    ),
-                  ),
+                  // Envolvemos el editor en un Theme para forzar el color de todo el texto
+child: Theme(
+  data: Theme.of(context).copyWith(
+    textTheme: Theme.of(context).textTheme.apply(
+      bodyColor: dynamicTextColor,      // Color para el texto normal
+      displayColor: dynamicTextColor,   // Color para los encabezados (H1, H2, etc.)
+    ),
+  ),
+  child: quill.QuillEditor.basic(
+    controller: _contentController,
+    config: quill.QuillEditorConfig(
+      autoFocus: false,
+      placeholder: 'Escribe algo increíble...',
+      expands: false,
+      padding: EdgeInsets.zero,
+      embedBuilders: [
+        ...FlutterQuillEmbeds.editorBuilders(),
+        AudioEmbedBuilder(),
+        DrawingEmbedBuilder(),
+      ],
+    ),
+  ),
+),
                 ),
               ),
             ],
