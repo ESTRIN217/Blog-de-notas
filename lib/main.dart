@@ -1263,25 +1263,58 @@ class _MyHomePageState extends State<MyHomePage> {
     // 2. Configuramos el editor en modo lectura
     final richTextPreview = IgnorePointer(
       // IgnorePointer asegura que el toque pase al InkWell de la tarjeta
-      child: Theme(
-  data: Theme.of(context).copyWith(
-    textTheme: Theme.of(context).textTheme.apply(
-      bodyColor: dynamicTextColor,      // Color para el texto normal
-      displayColor: dynamicTextColor,   // Color para los encabezados (H1, H2, etc.)
+
+child: quill.QuillEditor.basic(
+  controller: previewController,
+  config: quill.QuillEditorConfig(
+    showCursor: false,
+    padding: EdgeInsets.zero,
+    scrollable: false,
+    
+    // AQUÍ ESTÁ EL CAMBIO CLAVE:
+    customStyles: quill.DefaultStyles(
+      // Estilo para texto normal
+      paragraph: quill.DefaultTextBlockStyle(
+        TextStyle(color: dynamicTextColor, fontSize: 16),
+        const quill.HorizontalSpacing(0, 0),
+        const quill.VerticalSpacing(0, 0),
+        const quill.VerticalSpacing(0, 0),
+        null,
+      ),
+      // Estilo para Títulos Grandes (H1)
+      h1: quill.DefaultTextBlockStyle(
+        TextStyle(color: dynamicTextColor, fontSize: 28, fontWeight: FontWeight.bold),
+        const quill.HorizontalSpacing(0, 0),
+        const quill.VerticalSpacing(10, 0),
+        const quill.VerticalSpacing(0, 0),
+        null,
+      ),
+      // Estilo para Títulos Medianos (H2)
+      h2: quill.DefaultTextBlockStyle(
+        TextStyle(color: dynamicTextColor, fontSize: 22, fontWeight: FontWeight.bold),
+        const quill.HorizontalSpacing(0, 0),
+        const quill.VerticalSpacing(8, 0),
+        const quill.VerticalSpacing(0, 0),
+        null,
+      ),
+      // Estilo para Listas (Bullets y Checkboxes)
+      lists: quill.DefaultListBlockStyle(
+        TextStyle(color: dynamicTextColor, fontSize: 16),
+        const quill.HorizontalSpacing(0, 0),
+        const quill.VerticalSpacing(0, 0),
+        const quill.VerticalSpacing(0, 0),
+        null,
+        null, // Algunos versiones requieren un parámetro extra aquí para el checkbox
+      ),
+      // Estilo para el texto pequeño
+      small: TextStyle(color: dynamicTextColor, fontSize: 12),
     ),
-  ),
-  child: quill.QuillEditor.basic(
-    controller: previewController,
-    config: quill.QuillEditorConfig(
-      showCursor: false,
-          padding: EdgeInsets.zero,
-          scrollable: false,
-      embedBuilders: [
-        ...FlutterQuillEmbeds.editorBuilders(),
-        AudioEmbedBuilder(),
-        DrawingEmbedBuilder(),
-      ],
-    ),
+
+    embedBuilders: [
+      ...FlutterQuillEmbeds.editorBuilders(),
+      AudioEmbedBuilder(),
+      DrawingEmbedBuilder(),
+    ],
   ),
 ),
     );
